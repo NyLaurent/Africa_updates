@@ -28,7 +28,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "6sz1qc36yi.ufs.sh", // Added ufs.sh as a valid hostname
+        hostname: "j1384sfojb.ufs.sh", // Added ufs.sh as a valid hostname
         pathname: `/a/**`,  // Adjusting pattern to match any path starting with /a/
       },
     ],
