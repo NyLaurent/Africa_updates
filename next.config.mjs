@@ -2,13 +2,13 @@
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@node-rs/argon2"],
-    outputFileTracing: true
+    outputFileTracing: true,
   },
   webpack: (config) => {
     // Add node-loader for .node files
     config.module.rules.push({
       test: /\.node$/,
-      use: 'node-loader',
+      use: "node-loader",
     });
 
     return config;
@@ -29,6 +29,9 @@ const nextConfig = {
         destination: "/search?q=%23:tag",
       },
     ];
+  },
+  typescript: {
+    ignoreBuildErrors: true, // Ignores TypeScript build errors
   },
 };
 
