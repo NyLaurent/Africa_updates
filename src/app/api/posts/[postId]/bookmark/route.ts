@@ -10,7 +10,10 @@ export async function GET(
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401 }
+      );
     }
 
     const bookmark = await prisma.bookmark.findUnique({
@@ -26,10 +29,13 @@ export async function GET(
       isBookmarkedByUser: !!bookmark,
     };
 
-    return Response.json(data);
+    return new Response(JSON.stringify(data));
   } catch (error) {
     console.error(error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500 }
+    );
   }
 }
 
@@ -41,7 +47,10 @@ export async function POST(
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401 }
+      );
     }
 
     await prisma.bookmark.upsert({
@@ -58,10 +67,13 @@ export async function POST(
       update: {},
     });
 
-    return new Response();
+    return new Response(); // empty response is OK here
   } catch (error) {
     console.error(error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500 }
+    );
   }
 }
 
@@ -73,7 +85,10 @@ export async function DELETE(
     const { user: loggedInUser } = await validateRequest();
 
     if (!loggedInUser) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401 }
+      );
     }
 
     await prisma.bookmark.deleteMany({
@@ -83,9 +98,12 @@ export async function DELETE(
       },
     });
 
-    return new Response();
+    return new Response(); // empty response is OK here
   } catch (error) {
     console.error(error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500 }
+    );
   }
 }
