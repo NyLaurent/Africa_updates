@@ -1,0 +1,285 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model User {
+  id                    String         @id
+  username              String         @unique
+  displayName           String
+  email                 String?        @unique
+  passwordHash          String?
+  googleId              String?        @unique
+  avatarUrl             String?
+  bio                   String?
+  sessions              Session[]
+  role                  Role           @default(USER)
+  posts                 Post[]
+  following             Follow[]       @relation("Following")
+  followers             Follow[]       @relation("Followers")
+  likes                 Like[]
+  bookmarks             Bookmark[]
+  comments              Comment[]
+  receivedNotifications Notification[] @relation("Recipient")
+  issuedNotifications   Notification[] @relation("Issuer")
+
+  createdAt        DateTime           @default(now())
+  PublisherRequest PublisherRequest[]
+  Story            Story[]
+  Vote             Vote[]
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  PUBLISHER
+  ADMIN
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Follow {
+  followerId  String
+  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+enum Category {
+  POLITICS
+  BUSINESS
+  TECHNOLOGY
+  SCIENCE
+  HEALTH
+  SPORTS
+  ENTERTAINMENT
+  LIFESTYLE
+  WORLD
+  EDUCATION
+  ENVIRONMENT
+  TRAVEL
+  FOOD
+  FASHION
+  ART
+  CULTURE
+  RELIGION
+  CRIME
+  OPINION
+  ANALYSIS
+  LOCAL
+  NATIONAL
+  GLOBAL
+  HISTORY
+  WEATHER
+  FINANCE
+  REAL_ESTATE
+  STARTUPS
+  AUTOMOTIVE
+  CAREER
+  LAW
+  PHOTOGRAPHY
+  VIDEOGRAPHY
+  ANIMALS
+  AGRICULTURE
+  GAMING
+  CELEBRITY
+}
+
+model Post {
+  id                  String         @id @default(cuid())
+  title               String
+  description         String
+  body                String?
+  userId              String
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments         Media[]
+  likes               Like[]
+  category            Category?
+  bookmarks           Bookmark[]
+  options             PollOption[]
+  comments            Comment[]
+  linkedNotifications Notification[]
+
+  createdAt DateTime @default(now())
+
+  @@map("posts")
+}
+
+model Story {
+  id                  String         @id @default(cuid())
+  title               String
+  description         String
+  userId              String
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments         Media          @relation(fields: [mediaId], references: [id])
+  likes               Like[]
+  bookmarks           Bookmark[]
+  comments            Comment[]
+  linkedNotifications Notification[]
+
+  createdAt DateTime @default(now())
+  mediaId   String
+
+  @@map("story")
+}
+
+model PollOption {
+  id     String  @id @default(cuid())
+  title  String
+  Vote   Vote[]
+  Post   Post?   @relation(fields: [postId], references: [id])
+  postId String?
+}
+
+model Vote {
+  id       String      @id @default(cuid())
+  userId   String
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  optionId String?
+  option   PollOption? @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, optionId])
+  @@map("votes")
+}
+
+model Media {
+  id     String    @id @default(cuid())
+  postId String?
+  post   Post?     @relation(fields: [postId], references: [id], onDelete: SetNull)
+  type   MediaType
+  url    String
+
+  createdAt DateTime @default(now())
+  Story     Story[]
+
+  @@map("post_media")
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+model Comment {
+  id      String  @id @default(cuid())
+  content String
+  userId  String
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId  String?
+  post    Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  storyId   String?
+  story     Story?   @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("comments")
+}
+
+model Like {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  postId String?
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  storyId String?
+  story   Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId, storyId])
+  @@map("likes")
+}
+
+model Bookmark {
+  id     String  @id @default(cuid())
+  userId String
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId String?
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  storyId String?
+  story   Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+  @@map("bookmarks")
+}
+
+model Link {
+  id        String   @id @default(cuid())
+  title     String
+  url       String
+  category  String
+  createdAt DateTime @default(now())
+
+  @@map("links")
+}
+
+model Notification {
+  id          String  @id @default(cuid())
+  recipientId String
+  recipient   User    @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  issuerId    String
+  issuer      User    @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  postId      String?
+  post        Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  storyId String?
+  story   Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  type NotificationType
+  read Boolean          @default(false)
+  body String?
+
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  LIKE
+  FOLLOW
+  COMMENT
+  BECOME_PUBLISHER
+}
+
+model PublisherRequest {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      RequestStatus
+  requestedAt DateTime      @default(now())
+  respondedAt DateTime?
+
+  @@map("publisher_requests")
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
