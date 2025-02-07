@@ -26,11 +26,6 @@ const nextConfig = {
         hostname: "utfs.io",
         pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID || "*"}/**`,
       },
-      {
-        protocol: "https",
-        hostname: "ufs.sh", // Added ufs.sh as a valid hostname
-        pathname: `/a/**`,  // Adjusting pattern to match any path starting with /a/
-      },
     ],
   },
   rewrites: () => {
