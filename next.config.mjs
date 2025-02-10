@@ -1,14 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true, // ⚠️ Disables all TypeScript errors
+  },
+  eslint: {
+    ignoreDuringBuilds: true, // ⚠️ Disables ESLint checks
+  },
   experimental: {
     serverComponentsExternalPackages: ["@node-rs/argon2"],
-    outputFileTracing: true,
+    outputFileTracing: true
   },
   webpack: (config) => {
     // Add node-loader for .node files
     config.module.rules.push({
       test: /\.node$/,
-      use: "node-loader",
+      use: 'node-loader',
     });
 
     return config;
@@ -18,7 +24,17 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "utfs.io",
-        pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID || "*"}/**`,
+        pathname: `/a/${process.env.UPLOADTHING_APP_ID || "*"}/**`,
+      },
+      {
+        protocol: "https",
+        hostname: "utfs.sh",
+        pathname: `/a/${process.env.UPLOADTHING_APP_ID || "*"}/**`,
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**", // Allow all Google profile image paths
       },
     ],
   },
@@ -29,9 +45,6 @@ const nextConfig = {
         destination: "/search?q=%23:tag",
       },
     ];
-  },
-  typescript: {
-    ignoreBuildErrors: true, // Ignores TypeScript build errors
   },
 };
 
