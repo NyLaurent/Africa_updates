@@ -117,6 +117,7 @@ model Post {
   user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   attachments         Media[]
   likes               Like[]
+  role                Role?
   category            Category?
   bookmarks           Bookmark[]
   options             PollOption[]

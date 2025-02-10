@@ -63,10 +63,13 @@ export default function PostEditor() {
   function onSubmit() {
     mutation.mutate(
       {
+        type: "post",
+        input: {
         title: input,
         body: contentData,
         description: description,
         mediaIds: attachments.map((a) => a.mediaId).filter(Boolean) as string[],
+        }
       },
       {
         onSuccess: () => {

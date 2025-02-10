@@ -70,14 +70,8 @@ export async function submitPoll(input: {
 }) {
   const { user } = await validateRequest();
   if (!user) throw new Error("Unauthorized");
-  
-  // Check if input and options are valid
-  if (!input || !input.options || input.options.length === 0) {
-    throw new Error("Please provide options for the poll");
-  }
-
+  if (input.options.length === 0) throw new Error("Please provide options for the poll");
   const { title, description, options } = createPollSchema.parse(input);
-
   const result = await prisma.$transaction(async (tx) => {
     const newPoll = await tx.post.create({
       data: {
@@ -85,17 +79,14 @@ export async function submitPoll(input: {
         description,
         userId: user.id,
       },
-      include: getPostDataInclude(user.id),
+      include: getPostDataInclude(user.id)
     });
-
     const pollOptions = options.map((opt) => ({
       title: opt,
       postId: newPoll.id,
     }));
-
     await tx.pollOption.createMany({ data: pollOptions });
     return newPoll;
   });
-
   return result;
 }
