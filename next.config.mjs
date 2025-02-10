@@ -26,6 +26,11 @@ const nextConfig = {
         hostname: "utfs.io",
         pathname: `/a/${process.env.UPLOADTHING_APP_ID || "*"}/**`,
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: `/a/${process.env.UPLOADTHING_APP_ID ||"*"}/**`,
+      },
     ],
   },
   rewrites: () => {
