@@ -9,15 +9,12 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { updateUserProfile } from "./actions";
+import { updateUserProfile } from "./actions"; // Ensure this updates Prisma DB
 
 export function useUpdateProfileMutation() {
   const { toast } = useToast();
-
   const router = useRouter();
-
   const queryClient = useQueryClient();
-
   const { startUpload: startAvatarUpload } = useUploadThing("avatar");
 
   const mutation = useMutation({
@@ -28,51 +25,42 @@ export function useUpdateProfileMutation() {
       values: UpdateUserProfileValues;
       avatar?: File;
     }) => {
-      return Promise.all([
-        updateUserProfile(values),
-        avatar && startAvatarUpload([avatar]),
-      ]);
-    },
-    onSuccess: async ([updatedUser, uploadResult]) => {
-      const newAvatarUrl = uploadResult?.[0].serverData.avatarUrl;
+      const uploadResult = avatar ? await startAvatarUpload([avatar]) : null;
+      const avatarUrl = uploadResult?.[0]?.serverData?.avatarUrl || "";
 
-      const queryFilter: QueryFilters<InfiniteData<PostsPage, string | null>, Error, InfiniteData<PostsPage, string | null>, readonly unknown[]> = {
-        queryKey: ["post-feed"],
-      };
+      return updateUserProfile({ ...values, avatarUrl });
+    },
+    onSuccess: async (updatedUser) => {
+      const queryFilter = { queryKey: ["post-feed"] };
 
       await queryClient.cancelQueries(queryFilter);
 
-      queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
-        queryFilter,
-        (oldData) => {
-          if (!oldData) return;
+      queryClient.setQueriesData(queryFilter, (oldData: InfiniteData<PostsPage, string | null>) => {
+        if (!oldData) return;
 
-          return {
-            pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page) => ({
-              nextCursor: page.nextCursor,
-              posts: page.posts.map((post) => {
-                if (post.user.id === updatedUser.id) {
-                  return {
-                    ...post,
-                    user: {
-                      ...updatedUser,
-                      avatarUrl: newAvatarUrl || updatedUser.avatarUrl,
-                    },
-                  };
-                }
-                return post;
-              }),
-            })),
-          };
-        },
-      );
+        return {
+          pageParams: oldData.pageParams,
+          pages: oldData.pages.map((page) => ({
+            nextCursor: page.nextCursor,
+            posts: page.posts.map((post) => {
+              if (post.user.id === updatedUser.id) {
+                return {
+                  ...post,
+                  user: {
+                    ...updatedUser,
+                    avatarUrl: updatedUser.avatarUrl,
+                  },
+                };
+              }
+              return post;
+            }),
+          })),
+        };
+      });
 
       router.refresh();
 
-      toast({
-        description: "Profile updated",
-      });
+      toast({ description: "Profile updated" });
     },
     onError(error) {
       console.error(error);
@@ -85,3 +73,4 @@ export function useUpdateProfileMutation() {
 
   return mutation;
 }
+
