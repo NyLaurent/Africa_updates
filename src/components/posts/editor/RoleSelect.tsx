@@ -22,7 +22,7 @@ const RoleSelect = ({ value, onChange }: { value: any, onChange: (value: any) =>
                 htmlFor="category"
                 className="block  font-medium text-primary mb-2"
             >
-                Category
+                Role
             </label>
             <select
                 id="category"

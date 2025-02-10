@@ -18,12 +18,14 @@ import useMediaUpload, { Attachment } from "./useMediaUpload";
 import CategorySelect from "./CategorySelect";
 import RichTextEditor from "./RichTextEditor";
 import { useRouter } from "next/navigation";
+import RoleSelect from "./RoleSelect";
 
 export default function PostEditor() {
   const [contentData, setContentData] = useState("")
   const [category, setCategory] = useState("")
+  const [Role, setRole] = useState("")
   const [description, setDescription] = useState("")
-  // const { user } = useSession();
+  const { user } = useSession();
 
   const mutation = useSubmitPostMutation();
   const router = useRouter()
@@ -67,6 +69,8 @@ export default function PostEditor() {
         input: {
         title: input,
         body: contentData,
+        category: category,
+        role: Role,
         description: description,
         mediaIds: attachments.map((a) => a.mediaId).filter(Boolean) as string[],
         }
@@ -112,6 +116,10 @@ export default function PostEditor() {
       )}
 
       <CategorySelect value={category} onChange={(value) => setCategory(value)} />
+
+      {user.displayName === "Admin" && (
+        <RoleSelect value={Role} onChange={(value) => setRole(value)}/>
+      )}
 
       <div className="my-2 w-full">
         <p className="text-primary text-lg">Short Description</p>
