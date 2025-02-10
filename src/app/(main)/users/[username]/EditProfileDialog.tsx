@@ -59,7 +59,7 @@ export default function EditProfileDialog({
     const newAvatarFile = croppedAvatar
       ? new File([croppedAvatar], `avatar_${user.id}.webp`)
       : undefined;
-
+    console.log(values, newAvatarFile);
     mutation.mutate(
       {
         values,
