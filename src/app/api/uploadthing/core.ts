@@ -33,24 +33,6 @@ export const fileRouter = {
         `/a/${process.env.UPLOADTHING_APP_ID}/`,
       );
 
-      // Manually trigger the callback with the x-vercel-protection-bypass header
-      const response = await fetch(`${process.env.UPLOADTHING_CALLBACK_URL}?slug=avatar`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-vercel-protection-bypass': 'true', // Bypass protection for Vercel preview
-        },
-        body: JSON.stringify({
-          avatarUrl: newAvatarUrl,
-          userId: metadata.user.id,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Callback failed");
-      }
-
-      // Update user and stream server
       await Promise.all([
         prisma.user.update({
           where: { id: metadata.user.id },
@@ -68,7 +50,6 @@ export const fileRouter = {
 
       return { avatarUrl: newAvatarUrl };
     }),
-
   attachment: f({
     image: { maxFileSize: "4MB", maxFileCount: 5 },
     video: { maxFileSize: "64MB", maxFileCount: 5 },
@@ -89,19 +70,6 @@ export const fileRouter = {
           ),
           type: file.type.startsWith("image") ? "IMAGE" : "VIDEO",
         },
-      });
-
-      // Trigger callback manually
-      await fetch(`${process.env.UPLOADTHING_CALLBACK_URL}?slug=attachment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-vercel-protection-bypass': 'true', // Bypass protection for Vercel preview
-        },
-        body: JSON.stringify({
-          mediaId: media.id,
-          mediaUrl: media.url,
-        }),
       });
 
       return { mediaId: media.id };
