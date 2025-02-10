@@ -29,7 +29,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
-        pathname: `/a/${process.env.UPLOADTHING_APP_ID ||"*"}/**`,
+        pathname: "/**", // Allow all Google profile image paths
       },
     ],
   },
