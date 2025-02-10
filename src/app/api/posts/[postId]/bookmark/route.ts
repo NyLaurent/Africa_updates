@@ -13,12 +13,11 @@ export async function GET(
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const bookmark = await prisma.bookmark.findUnique({
+    // Use findFirst instead of findUnique if composite key isn't properly configured
+    const bookmark = await prisma.bookmark.findFirst({
       where: {
-        userId_postId: {
-          userId: loggedInUser.id,
-          postId,
-        },
+        userId: loggedInUser.id,
+        postId,
       },
     });
 
@@ -44,21 +43,24 @@ export async function POST(
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.bookmark.upsert({
+    // Simplified upsert using create/delete pattern
+    const existingBookmark = await prisma.bookmark.findFirst({
       where: {
-        userId_postId: {
-          userId: loggedInUser.id,
-          postId,
-        },
-      },
-      create: {
         userId: loggedInUser.id,
         postId,
       },
-      update: {},
     });
 
-    return new Response();
+    if (!existingBookmark) {
+      await prisma.bookmark.create({
+        data: {
+          userId: loggedInUser.id,
+          postId,
+        },
+      });
+    }
+
+    return new Response(null, { status: 204 });
   } catch (error) {
     console.error(error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
@@ -83,7 +85,7 @@ export async function DELETE(
       },
     });
 
-    return new Response();
+    return new Response(null, { status: 204 });
   } catch (error) {
     console.error(error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
