@@ -242,25 +242,30 @@ model Link {
 }
 
 model Notification {
-  id          String  @id @default(cuid())
-  recipientId String
-  recipient   User    @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
-  issuerId    String
-  issuer      User    @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
-  postId      String?
-  post        Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id                 String  @id @default(cuid())
+  recipientId        String
+  recipient          User    @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  issuerId          String
+  issuer            User    @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
 
-  storyId String?
-  story   Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  postId            String?
+  post              Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  type NotificationType
-  read Boolean          @default(false)
-  body String?
+  storyId           String?
+  story             Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+  publisherRequestId String?  // New field to link with PublisherRequest
+  publisherRequest   PublisherRequest? @relation(fields: [publisherRequestId], references: [id], onDelete: Cascade)
+
+  type              NotificationType
+  read              Boolean @default(false)
+  body              String? // This will store the approval/rejection message
+
+  createdAt         DateTime @default(now())
 
   @@map("notifications")
 }
+
 
 enum NotificationType {
   LIKE
@@ -276,8 +281,10 @@ model PublisherRequest {
   status      RequestStatus
   requestedAt DateTime      @default(now())
   respondedAt DateTime?
+  message     String?       // Stores the admin's message for approval or rejection
 
   @@map("publisher_requests")
+  Notification Notification[]
 }
 
 enum RequestStatus {
