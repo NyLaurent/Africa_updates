@@ -12,7 +12,7 @@ const Page = () => {
 
   useEffect(() => {
     // Check if the user role is "Publisher"
-    if (user?.role === 'PUBLISHER' && user.hasPaid === false) {
+    if (user?.role === 'PUBLISHER' && user.hasPaid === false || null) {
       setShowReminder(true);
     }
   }, [user]);
