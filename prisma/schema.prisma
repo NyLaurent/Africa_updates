@@ -38,7 +38,7 @@ model User {
   bio                   String?
   sessions              Session[]
   role                  Role           @default(USER)
-  hasPaid               Boolean?       // Only relevant if role is PUBLISHER
+  hasPaid               Boolean?       @default(false)// Only relevant if role is PUBLISHER
   payments             paymentSession[] @relation("UserPayments")
   posts                 Post[]
   following             Follow[]       @relation("Following")
