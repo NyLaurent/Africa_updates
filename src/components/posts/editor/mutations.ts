@@ -8,6 +8,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { submitPoll, submitPost, submitStory } from "./actions";
+import { Query } from "@tanstack/react-query";
 
 export function useSubmitPostMutation() {
   const { toast } = useToast();
@@ -25,7 +26,7 @@ export function useSubmitPostMutation() {
       }
     },
     onSuccess: async (newPost) => {
-      const queryFilter: QueryFilters = {
+      const queryFilter: QueryFilters<InfiniteData<PostsPage, string | null>, Error, InfiniteData<PostsPage, string | null>, readonly unknown[]> = {
         queryKey: ["post-feed"],
         predicate: (query) =>
           query.queryKey.includes("for-you") ||
@@ -77,15 +78,13 @@ export function useSubmitPostMutation() {
 
 export function useSubmitStoryMutation() {
   const { toast } = useToast();
-
   const queryClient = useQueryClient();
-
   const { user } = useSession();
 
   const mutation = useMutation({
     mutationFn: submitStory,
     onSuccess: async (newStory) => {
-      const queryFilter = {
+      const queryFilter: QueryFilters<InfiniteData<StoriesPage, string | null>, Error, InfiniteData<StoriesPage, string | null>, readonly unknown[]> = {
         queryKey: ["story-feed"],
         predicate(query) {
           return (
@@ -94,7 +93,7 @@ export function useSubmitStoryMutation() {
               query.queryKey.includes(user.id))
           );
         },
-      } satisfies QueryFilters;
+      };
 
       await queryClient.cancelQueries(queryFilter);
 
@@ -115,13 +114,14 @@ export function useSubmitStoryMutation() {
               ],
             };
           }
+          return oldData; // Ensure a return value
         },
       );
 
       queryClient.invalidateQueries({
         queryKey: queryFilter.queryKey,
         predicate(query) {
-          return queryFilter.predicate(query) && !query.state.data;
+          return !!(queryFilter.predicate && queryFilter.predicate(query as Query<InfiniteData<StoriesPage, string | null>, Error, InfiniteData<StoriesPage, string | null>, readonly unknown[]>) && !query.state.data);
         },
       });
 
@@ -140,4 +140,3 @@ export function useSubmitStoryMutation() {
 
   return mutation;
 }
-

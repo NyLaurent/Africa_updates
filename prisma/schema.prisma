@@ -15,6 +15,18 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
+model paymentSession {
+  id              String   @id @default(cuid())
+  userId          String
+  paymentIntentId String   @unique
+  paymentMethod   String
+  status          String   // Added this field
+  createdAt       DateTime @default(now())
+  user            User     @relation("UserPayments", fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
 model User {
   id                    String         @id
   username              String         @unique
@@ -26,6 +38,8 @@ model User {
   bio                   String?
   sessions              Session[]
   role                  Role           @default(USER)
+  hasPaid               Boolean?       // Only relevant if role is PUBLISHER
+  payments             paymentSession[] @relation("UserPayments")
   posts                 Post[]
   following             Follow[]       @relation("Following")
   followers             Follow[]       @relation("Followers")
@@ -41,7 +55,9 @@ model User {
   Vote             Vote[]
 
   @@map("users")
+
 }
+
 
 enum Role {
   USER

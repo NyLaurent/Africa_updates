@@ -4,6 +4,7 @@ import SearchField from "@/components/SearchField";
 import UserButton from "@/components/UserButton";
 import prisma from "@/lib/prisma";
 import { Role } from "@prisma/client";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default async function Navbar() {
@@ -29,12 +30,21 @@ export default async function Navbar() {
               </Link>
             )}
             {userInfo?.role === "USER" && (
-              <BecomePublisherButton user={userInfo as any} />
+              <div className="flex flex-row items-center">
+                <div className="mr-3">
+                  <Link href={"/posts/create"}>
+                    <Button variant="default">Create Post</Button>
+                  </Link>
+                </div>
+                <div>
+                  <BecomePublisherButton user={userInfo as any} />
+                </div>
+              </div>
             )}
             {userInfo?.role === "ADMIN" && (
               <Link
                 href={"/posts/create"}
-                className="rounded-full text-black bg-primary px-10 py-2 font-bold"
+                className="rounded-full bg-primary px-10 py-2 font-bold text-black"
               >
                 Create Post
               </Link>

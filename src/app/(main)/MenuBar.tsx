@@ -6,6 +6,7 @@ import { Bookmark, Home, UsersRound, Link as LinkIcon } from "lucide-react";
 import Link from "next/link";
 import MessagesButton from "./MessagesButton";
 import NotificationsButton from "./NotificationsButton";
+import { ShoppingBag } from "lucide-react";
 import { Role } from "@prisma/client";
 
 interface MenuBarProps {
@@ -100,6 +101,17 @@ export default async function MenuBar({ className }: MenuBarProps) {
               <Link href="/my-posts">
                 <Bookmark />
                 <span className="hidden lg:inline">My Posts</span>
+              </Link>
+            </Button>)}
+            {userInfo?.role == "PUBLISHER" && (<Button
+              variant="ghost"
+              className="flex items-center justify-start gap-3"
+              title="My Subscription"
+              asChild
+            >
+              <Link href="/my-Subscription">
+                <ShoppingBag />
+                <span className="hidden lg:inline">My Subscription</span>
               </Link>
             </Button>)}
             {userInfo && <Button
