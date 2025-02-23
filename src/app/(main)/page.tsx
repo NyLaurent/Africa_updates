@@ -6,17 +6,21 @@ import ForYouFeed from "./ForYouFeed";
 import { validateRequest } from "@/auth";
 import LatestFeed from "./LatestFeed";
 import TrendingFeed from "./TrendingFeed";
-import prisma from "@/lib/prisma";
+import prisma from "@/lib/prisma"; // Import the new component
+import AdminPage from "@/components/AdminPage";
 
 export default async function Home() {
   const session = await validateRequest();
   const userInfo = await prisma.user.findUnique({
     where: { id: session.user?.id || "" }
-  })
+  });
+
   return (
     <main className="flex w-full min-w-0 gap-5">
       <div className="w-full min-w-0 space-y-5">
-        {session.user && userInfo?.role !== "ADMIN" ? (
+        {userInfo?.role === "ADMIN" ? (
+          <AdminPage /> // Show dashboard if user is admin
+        ) : session.user ? (
           <Tabs defaultValue="for-you">
             <TabsList>
               <TabsTrigger value="for-you">For you</TabsTrigger>
@@ -29,7 +33,7 @@ export default async function Home() {
               <FollowingFeed />
             </TabsContent>
           </Tabs>
-        ) : (userInfo?.role == "ADMIN" || !session.user) && (
+        ) : (
           <Tabs defaultValue="latest">
             <TabsList>
               <TabsTrigger value="latest">Latest Posts</TabsTrigger>
@@ -44,7 +48,7 @@ export default async function Home() {
           </Tabs>
         )}
       </div>
-      {userInfo?.role !== "ADMIN" && <TrendsSidebar />}
+      {userInfo?.role === "ADMIN" && <TrendsSidebar />}
     </main>
   );
 }
