@@ -8,10 +8,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { submitPoll, submitPost, submitStory } from "./actions";
-<<<<<<< HEAD
 import { Query } from "@tanstack/react-query";
-=======
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 
 export function useSubmitPostMutation() {
   const { toast } = useToast();
@@ -29,11 +26,7 @@ export function useSubmitPostMutation() {
       }
     },
     onSuccess: async (newPost) => {
-<<<<<<< HEAD
       const queryFilter: QueryFilters<InfiniteData<PostsPage, string | null>, Error, InfiniteData<PostsPage, string | null>, readonly unknown[]> = {
-=======
-      const queryFilter: QueryFilters = {
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
         queryKey: ["post-feed"],
         predicate: (query) =>
           query.queryKey.includes("for-you") ||
@@ -85,23 +78,13 @@ export function useSubmitPostMutation() {
 
 export function useSubmitStoryMutation() {
   const { toast } = useToast();
-<<<<<<< HEAD
   const queryClient = useQueryClient();
-=======
-
-  const queryClient = useQueryClient();
-
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
   const { user } = useSession();
 
   const mutation = useMutation({
     mutationFn: submitStory,
     onSuccess: async (newStory) => {
-<<<<<<< HEAD
       const queryFilter: QueryFilters<InfiniteData<StoriesPage, string | null>, Error, InfiniteData<StoriesPage, string | null>, readonly unknown[]> = {
-=======
-      const queryFilter = {
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
         queryKey: ["story-feed"],
         predicate(query) {
           return (
@@ -110,11 +93,7 @@ export function useSubmitStoryMutation() {
               query.queryKey.includes(user.id))
           );
         },
-<<<<<<< HEAD
       };
-=======
-      } satisfies QueryFilters;
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 
       await queryClient.cancelQueries(queryFilter);
 
@@ -135,21 +114,14 @@ export function useSubmitStoryMutation() {
               ],
             };
           }
-<<<<<<< HEAD
           return oldData; // Ensure a return value
-=======
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
         },
       );
 
       queryClient.invalidateQueries({
         queryKey: queryFilter.queryKey,
         predicate(query) {
-<<<<<<< HEAD
           return !!(queryFilter.predicate && queryFilter.predicate(query as Query<InfiniteData<StoriesPage, string | null>, Error, InfiniteData<StoriesPage, string | null>, readonly unknown[]>) && !query.state.data);
-=======
-          return queryFilter.predicate(query) && !query.state.data;
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
         },
       });
 
@@ -168,7 +140,3 @@ export function useSubmitStoryMutation() {
 
   return mutation;
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1

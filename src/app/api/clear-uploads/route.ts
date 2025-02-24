@@ -32,11 +32,7 @@ export async function GET(req: Request) {
     new UTApi().deleteFiles(
       unusedMedia.map(
         (m) =>
-<<<<<<< HEAD
           m.url.split(`/a/${process.env.UPLOADTHING_APP_ID}/`)[1],
-=======
-          m.url.split(`/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`)[1],
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
       ),
     );
 

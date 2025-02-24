@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-<<<<<<< HEAD
   typescript: {
     ignoreBuildErrors: true, // ⚠️ Disables all TypeScript errors
   },
@@ -10,31 +9,17 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@node-rs/argon2"],
     outputFileTracing: true
-=======
-  experimental: {
-    serverComponentsExternalPackages: ["@node-rs/argon2"],
-    outputFileTracing: true,
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
   },
   webpack: (config) => {
     // Add node-loader for .node files
     config.module.rules.push({
       test: /\.node$/,
-<<<<<<< HEAD
       use: 'node-loader',
-=======
-      use: "node-loader",
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
     });
-
     return config;
-  },
-  images: {
-    remotePatterns: [
       {
         protocol: "https",
         hostname: "utfs.io",
-<<<<<<< HEAD
         pathname: `/a/${process.env.UPLOADTHING_APP_ID || "*"}/**`,
       },
       {
@@ -46,9 +31,6 @@ const nextConfig = {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
         pathname: "/**", // Allow all Google profile image paths
-=======
-        pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID || "*"}/**`,
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
       },
     ],
   },
@@ -60,12 +42,6 @@ const nextConfig = {
       },
     ];
   },
-<<<<<<< HEAD
-=======
-  typescript: {
-    ignoreBuildErrors: true, // Ignores TypeScript build errors
-  },
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 };
 
 export default nextConfig;

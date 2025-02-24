@@ -13,10 +13,6 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-<<<<<<< HEAD
-=======
-    
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
     "plugins": [
       {
         "name": "next"

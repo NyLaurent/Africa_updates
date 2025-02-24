@@ -18,22 +18,14 @@ import useMediaUpload, { Attachment } from "./useMediaUpload";
 import CategorySelect from "./CategorySelect";
 import RichTextEditor from "./RichTextEditor";
 import { useRouter } from "next/navigation";
-<<<<<<< HEAD
 import RoleSelect from "./RoleSelect";
-=======
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 
 export default function PostEditor() {
   const [contentData, setContentData] = useState("")
   const [category, setCategory] = useState("")
-<<<<<<< HEAD
   const [Role, setRole] = useState("")
   const [description, setDescription] = useState("")
   const { user } = useSession();
-=======
-  const [description, setDescription] = useState("")
-  // const { user } = useSession();
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 
   const mutation = useSubmitPostMutation();
   const router = useRouter()
@@ -73,7 +65,6 @@ export default function PostEditor() {
   function onSubmit() {
     mutation.mutate(
       {
-<<<<<<< HEAD
         type: "post",
         input: {
         title: input,
@@ -83,12 +74,6 @@ export default function PostEditor() {
         description: description,
         mediaIds: attachments.map((a) => a.mediaId).filter(Boolean) as string[],
         }
-=======
-        title: input,
-        body: contentData,
-        description: description,
-        mediaIds: attachments.map((a) => a.mediaId).filter(Boolean) as string[],
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
       },
       {
         onSuccess: () => {
@@ -132,13 +117,10 @@ export default function PostEditor() {
 
       <CategorySelect value={category} onChange={(value) => setCategory(value)} />
 
-<<<<<<< HEAD
       {user.displayName === "Admin" && (
         <RoleSelect value={Role} onChange={(value) => setRole(value)}/>
       )}
 
-=======
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
       <div className="my-2 w-full">
         <p className="text-primary text-lg">Short Description</p>
         <textarea name="" id="" className="h-[200px] outline-none p-3 w-full bg-background rounded-2xl" placeholder="Short Description" value={description} onChange={(e) => setDescription(e.target.value)} />

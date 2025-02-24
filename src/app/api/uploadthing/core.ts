@@ -22,11 +22,7 @@ export const fileRouter = {
 
       if (oldAvatarUrl) {
         const key = oldAvatarUrl.split(
-<<<<<<< HEAD
           `/a/${process.env.UPLOADTHING_APP_ID}/`,
-=======
-          `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
         )[1];
 
         await new UTApi().deleteFiles(key);
@@ -34,11 +30,7 @@ export const fileRouter = {
 
       const newAvatarUrl = file.url.replace(
         "/f/",
-<<<<<<< HEAD
         `/a/${process.env.UPLOADTHING_APP_ID}/`,
-=======
-        `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
       );
 
       await Promise.all([
@@ -74,11 +66,7 @@ export const fileRouter = {
         data: {
           url: file.url.replace(
             "/f/",
-<<<<<<< HEAD
             `/a/${process.env.UPLOADTHING_APP_ID}/`,
-=======
-            `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
           ),
           type: file.type.startsWith("image") ? "IMAGE" : "VIDEO",
         },

@@ -73,11 +73,7 @@ export default async function Page({ params: { username } }: PageProps) {
           </div>
           <UserPosts userId={user.id} /></>}
       </div>
-<<<<<<< HEAD
       {user.role == "ADMIN" && <TrendsSidebar />}
-=======
-      {user.role !== "ADMIN" && <TrendsSidebar />}
->>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
     </main>
   );
 }
