@@ -72,7 +72,7 @@ export default function ReminderPublisherDialog({
             }}
             className="mr-3 text-gray-500 hover:text-gray-700"
           >
-            I'll Do It Later
+            I will Do It Later
           </button>
           <LoadingButton
             onClick={() => {
