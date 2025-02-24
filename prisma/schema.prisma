@@ -15,6 +15,7 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
+<<<<<<< HEAD
 model paymentSession {
   id              String   @id @default(cuid())
   userId          String
@@ -27,6 +28,8 @@ model paymentSession {
   @@index([userId])
 }
 
+=======
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 model User {
   id                    String         @id
   username              String         @unique
@@ -38,8 +41,11 @@ model User {
   bio                   String?
   sessions              Session[]
   role                  Role           @default(USER)
+<<<<<<< HEAD
   hasPaid               Boolean?       @default(false)// Only relevant if role is PUBLISHER
   payments             paymentSession[] @relation("UserPayments")
+=======
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
   posts                 Post[]
   following             Follow[]       @relation("Following")
   followers             Follow[]       @relation("Followers")
@@ -55,11 +61,16 @@ model User {
   Vote             Vote[]
 
   @@map("users")
+<<<<<<< HEAD
 
   PublisherProfile PublisherProfile[]
 }
 
 
+=======
+}
+
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 enum Role {
   USER
   PUBLISHER
@@ -134,7 +145,10 @@ model Post {
   user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   attachments         Media[]
   likes               Like[]
+<<<<<<< HEAD
   role                Role?
+=======
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
   category            Category?
   bookmarks           Bookmark[]
   options             PollOption[]
@@ -228,7 +242,10 @@ model Like {
   story   Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId, storyId])
+<<<<<<< HEAD
   @@unique([userId, postId], name: "userId_postId")
+=======
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
   @@map("likes")
 }
 
@@ -259,6 +276,7 @@ model Link {
 }
 
 model Notification {
+<<<<<<< HEAD
   id                 String  @id @default(cuid())
   recipientId        String
   recipient          User    @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
@@ -279,11 +297,32 @@ model Notification {
   body              String? // This will store the approval/rejection message
 
   createdAt         DateTime @default(now())
+=======
+  id          String  @id @default(cuid())
+  recipientId String
+  recipient   User    @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  issuerId    String
+  issuer      User    @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  postId      String?
+  post        Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  storyId String?
+  story   Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  type NotificationType
+  read Boolean          @default(false)
+  body String?
+
+  createdAt DateTime @default(now())
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 
   @@map("notifications")
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 enum NotificationType {
   LIKE
   FOLLOW
@@ -298,10 +337,15 @@ model PublisherRequest {
   status      RequestStatus
   requestedAt DateTime      @default(now())
   respondedAt DateTime?
+<<<<<<< HEAD
   message     String?       // Stores the admin's message for approval or rejection
 
   @@map("publisher_requests")
   Notification Notification[]
+=======
+
+  @@map("publisher_requests")
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 }
 
 enum RequestStatus {
@@ -309,6 +353,7 @@ enum RequestStatus {
   APPROVED
   REJECTED
 }
+<<<<<<< HEAD
 
 model PublisherProfile {
   id                  String   @id @default(cuid())
@@ -335,3 +380,5 @@ model PublisherProfile {
 
   @@map("publisher_profiles")
 }
+=======
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1

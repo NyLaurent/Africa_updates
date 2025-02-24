@@ -37,9 +37,14 @@ export async function GET(req: NextRequest) {
           Authorization: `Bearer ${tokens.accessToken}`,
         },
       })
+<<<<<<< HEAD
       .json<{ id: string; name: string; email: string; picture: string }>();
 
     // Check if the user already exists
+=======
+      .json<{ id: string; name: string }>();
+
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
     const existingUser = await prisma.user.findUnique({
       where: {
         googleId: googleUser.id,
@@ -47,7 +52,10 @@ export async function GET(req: NextRequest) {
     });
 
     if (existingUser) {
+<<<<<<< HEAD
       // User exists, create a session for the user
+=======
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
       const session = await lucia.createSession(existingUser.id, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
       cookies().set(
@@ -63,23 +71,36 @@ export async function GET(req: NextRequest) {
       });
     }
 
+<<<<<<< HEAD
     // Create a new user if not found
     const userId = generateIdFromEntropySize(10);
     const username = slugify(googleUser.name) + "-" + userId.slice(0, 4);
 
     // Transaction to create the user in the database
+=======
+    const userId = generateIdFromEntropySize(10);
+
+    const username = slugify(googleUser.name) + "-" + userId.slice(0, 4);
+
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
     await prisma.$transaction(async (tx) => {
       await tx.user.create({
         data: {
           id: userId,
           username,
           displayName: googleUser.name,
+<<<<<<< HEAD
           email: googleUser.email, // Store the email
           avatarUrl: googleUser.picture, // Store the Google profile picture URL
           googleId: googleUser.id, // Store the Google ID
         },
       });
       // Handle other related tasks such as upserting the user in Stream
+=======
+          googleId: googleUser.id,
+        },
+      });
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
       await streamServerClient.upsertUser({
         id: userId,
         username,
@@ -87,7 +108,10 @@ export async function GET(req: NextRequest) {
       });
     });
 
+<<<<<<< HEAD
     // Create a session for the new user
+=======
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     cookies().set(

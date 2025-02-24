@@ -9,12 +9,24 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+<<<<<<< HEAD
 import { updateUserProfile } from "./actions"; // Ensure this updates Prisma DB
 
 export function useUpdateProfileMutation() {
   const { toast } = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
+=======
+import { updateUserProfile } from "./actions";
+
+export function useUpdateProfileMutation() {
+  const { toast } = useToast();
+
+  const router = useRouter();
+
+  const queryClient = useQueryClient();
+
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
   const { startUpload: startAvatarUpload } = useUploadThing("avatar");
 
   const mutation = useMutation({
@@ -25,6 +37,7 @@ export function useUpdateProfileMutation() {
       values: UpdateUserProfileValues;
       avatar?: File;
     }) => {
+<<<<<<< HEAD
       const uploadResult = avatar ? await startAvatarUpload([avatar]) : null;
       const avatarUrl = uploadResult?.[0]?.serverData?.avatarUrl || "";
 
@@ -61,6 +74,53 @@ export function useUpdateProfileMutation() {
       router.refresh();
 
       toast({ description: "Profile updated" });
+=======
+      return Promise.all([
+        updateUserProfile(values),
+        avatar && startAvatarUpload([avatar]),
+      ]);
+    },
+    onSuccess: async ([updatedUser, uploadResult]) => {
+      const newAvatarUrl = uploadResult?.[0].serverData.avatarUrl;
+
+      const queryFilter: QueryFilters = {
+        queryKey: ["post-feed"],
+      };
+
+      await queryClient.cancelQueries(queryFilter);
+
+      queryClient.setQueriesData<InfiniteData<PostsPage, string | null>>(
+        queryFilter,
+        (oldData) => {
+          if (!oldData) return;
+
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page) => ({
+              nextCursor: page.nextCursor,
+              posts: page.posts.map((post) => {
+                if (post.user.id === updatedUser.id) {
+                  return {
+                    ...post,
+                    user: {
+                      ...updatedUser,
+                      avatarUrl: newAvatarUrl || updatedUser.avatarUrl,
+                    },
+                  };
+                }
+                return post;
+              }),
+            })),
+          };
+        },
+      );
+
+      router.refresh();
+
+      toast({
+        description: "Profile updated",
+      });
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
     },
     onError(error) {
       console.error(error);
@@ -73,4 +133,7 @@ export function useUpdateProfileMutation() {
 
   return mutation;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1

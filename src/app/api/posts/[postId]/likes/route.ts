@@ -71,6 +71,7 @@ export async function POST(
     }
 
     await prisma.$transaction([
+<<<<<<< HEAD
   prisma.like.upsert({
     where: {
       userId_postId: {
@@ -98,6 +99,34 @@ export async function POST(
     : []),
 ]);
 
+=======
+      prisma.like.upsert({
+        where: {
+          userId_postId: {
+            userId: loggedInUser.id,
+            postId,
+          },
+        },
+        create: {
+          userId: loggedInUser.id,
+          postId,
+        },
+        update: {},
+      }),
+      ...(loggedInUser.id !== post.userId
+        ? [
+            prisma.notification.create({
+              data: {
+                issuerId: loggedInUser.id,
+                recipientId: post.userId,
+                postId,
+                type: "LIKE",
+              },
+            }),
+          ]
+        : []),
+    ]);
+>>>>>>> 03997ca83e92534005f18531b19b66bb8cadbee1
 
     return new Response();
   } catch (error) {
