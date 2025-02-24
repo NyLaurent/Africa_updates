@@ -34,6 +34,8 @@ export default async function MenuBar({ className }: MenuBarProps) {
     : [0, 0];
 
   return (
+    <div>
+      {userInfo?.role != "ADMIN" && (
     <div className={className}>
       <Button
         variant="ghost"
@@ -103,7 +105,7 @@ export default async function MenuBar({ className }: MenuBarProps) {
                 <span className="hidden lg:inline">My Posts</span>
               </Link>
             </Button>)}
-            {userInfo?.role == "PUBLISHER" && (<Button
+            {userInfo?.role != "PUBLISHER" && (<Button
               variant="ghost"
               className="flex items-center justify-start gap-3"
               title="My Subscription"
@@ -127,6 +129,8 @@ export default async function MenuBar({ className }: MenuBarProps) {
             </Button>}
           </>
         )}
+    </div>
+)}
     </div>
   );
 }
