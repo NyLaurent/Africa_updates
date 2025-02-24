@@ -8,7 +8,14 @@ const nextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ["@node-rs/argon2"],
-    outputFileTracing: true
+    outputFileTracing: true,
+  },
+  images: { // Add images configuration here
+    domains: [
+      "utfs.io",
+      "j1384sfojb.ufs.sh",
+      "lh3.googleusercontent.com",
+    ],
   },
   webpack: (config) => {
     // Add node-loader for .node files
@@ -17,22 +24,6 @@ const nextConfig = {
       use: 'node-loader',
     });
     return config;
-      {
-        protocol: "https",
-        hostname: "utfs.io",
-        pathname: `/a/${process.env.UPLOADTHING_APP_ID || "*"}/**`,
-      },
-      {
-        protocol: "https",
-        hostname: "j1384sfojb.ufs.sh",
-        pathname: `/a/${process.env.UPLOADTHING_APP_ID || "*"}/**`,
-      },
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-        pathname: "/**", // Allow all Google profile image paths
-      },
-    ],
   },
   rewrites: () => {
     return [
