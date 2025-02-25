@@ -4,6 +4,12 @@
 
 @import "~stream-chat-react/dist/css/v2/index.css";
 
+
+body{
+
+  font-family: var(--font-work-sans), sans-serif;
+}
+
 @layer base {
   :root {
     --background: 224, 5%, 95%;

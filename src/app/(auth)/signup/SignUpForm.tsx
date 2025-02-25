@@ -1,26 +1,18 @@
-"use client";
+"use client"
 
-import LoadingButton from "@/components/LoadingButton";
-import { PasswordInput } from "@/components/PasswordInput";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { signUpSchema, SignUpValues } from "@/lib/validation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { signUp } from "./actions";
+import LoadingButton from "@/components/LoadingButton"
+import { PasswordInput } from "@/components/PasswordInput"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { signUpSchema, type SignUpValues } from "@/lib/validation"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useState, useTransition } from "react"
+import { useForm } from "react-hook-form"
+import { signUp } from "./actions"
 
 export default function SignUpForm() {
-  const [error, setError] = useState<string>();
-
-  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string>()
+  const [isPending, startTransition] = useTransition()
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -29,20 +21,20 @@ export default function SignUpForm() {
       username: "",
       password: "",
     },
-  });
+  })
 
   async function onSubmit(values: SignUpValues) {
-    setError(undefined);
+    setError(undefined)
     startTransition(async () => {
-      const { error } = await signUp(values);
-      if (error) setError(error);
-    });
+      const { error } = await signUp(values)
+      if (error) setError(error)
+    })
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        {error && <p className="text-center text-destructive">{error}</p>}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {error && <p className="text-center text-destructive text-sm">{error}</p>}
         <FormField
           control={form.control}
           name="username"
@@ -50,7 +42,7 @@ export default function SignUpForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="Username" {...field} />
+                <Input placeholder="Username" {...field} className="h-11 bg-gray-100 border-0 rounded-md" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -63,7 +55,7 @@ export default function SignUpForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Email" type="email" {...field} />
+                <Input placeholder="Email" type="email" {...field} className="h-11 bg-gray-100 border-0 rounded-md" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -76,16 +68,21 @@ export default function SignUpForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordInput placeholder="Password" {...field} />
+                <PasswordInput placeholder="Password" {...field} className="h-11 bg-gray-100 border-0 rounded-md" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <LoadingButton loading={isPending} type="submit" className="w-full">
+        <LoadingButton
+          loading={isPending}
+          type="submit"
+          className="w-full h-11 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md"
+        >
           Create account
         </LoadingButton>
       </form>
     </Form>
-  );
+  )
 }
+

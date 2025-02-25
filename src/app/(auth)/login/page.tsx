@@ -1,39 +1,47 @@
-import loginImage from "@/assets/login-image.jpg";
-import { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import GoogleSignInButton from "./google/GoogleSignInButton";
-import LoginForm from "./LoginForm";
+import type { Metadata } from "next"
+import Link from "next/link"
+import LoginForm from "./LoginForm"
+import GoogleSignInButton from "./google/GoogleSignInButton"
 
 export const metadata: Metadata = {
   title: "Login",
-};
+}
 
 export default function Page() {
   return (
-    <main className="flex h-screen items-center justify-center p-5">
-      <div className="flex h-full max-h-[40rem] w-full max-w-[45rem] overflow-hidden rounded-2xl bg-card shadow-2xl">
-        <div className="w-full space-y-10 overflow-y-auto p-10 ">
-          <h1 className="text-center text-3xl font-bold">Login to Africa Updates</h1>
-          <div className="space-y-5">
-            <GoogleSignInButton />
-            <div className="flex items-center gap-3">
-              <div className="h-px flex-1 bg-muted" />
-              <span>OR</span>
-              <div className="h-px flex-1 bg-muted" />
+    <main className="flex min-h-screen items-center justify-center p-5">
+      <div className="flex w-full max-w-5xl overflow-hidden rounded-sm shadow-lg">
+        <div className="flex-1 bg-white p-8">
+          <div className="w-full max-w-sm mx-auto space-y-6">
+            <h1 className="text-3xl font-bold">SignIn to <span className="text-emerald-500">Africa Updates</span></h1>
+            <div className="space-y-6">
+              <GoogleSignInButton />
+              <div className="flex items-center gap-3">
+                <div className="h-px flex-1 bg-muted" />
+                <span className="text-sm text-muted-foreground">OR</span>
+                <div className="h-px flex-1 bg-muted" />
+              </div>
+              <LoginForm />
             </div>
-            <LoginForm />
-            <Link href="/signup" className="block text-center hover:underline">
-              Don&apos;t have an account? Sign up
-            </Link>
           </div>
         </div>
-        {/* <Image
-          src={loginImage}
-          alt=""
-          className="hidden w-1/2 object-cover md:block"
-        /> */}
+        <div className="hidden md:flex flex-1 bg-emerald-500 items-center justify-center p-8">
+          <div className="max-w-sm text-center text-white space-y-4">
+            <h2 className="text-3xl font-bold">Welcome back!</h2>
+            <p>
+              Welcome back! We are so happy to have you here. Its great to see you again. We hope you had a safe and
+              enjoyable time away.
+            </p>
+            <p>
+              Not registered yet?{" "}
+              <Link href="/signup" className="underline hover:text-emerald-100">
+                Signup
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </main>
-  );
+  )
 }
+
