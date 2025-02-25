@@ -35,7 +35,7 @@ export default function Page() {
             <p>
               Not registered yet?{" "}
               <Link href="/signup" className="underline hover:text-emerald-100">
-                Signup
+                Create Account
               </Link>
             </p>
           </div>
