@@ -9,24 +9,28 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { login } from "./actions"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import { z } from "zod"
 
 export default function LoginForm() {
   const [error, setError] = useState<string>()
   const [isPending, startTransition] = useTransition()
 
-  const form = useForm<LoginValues>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<LoginValues & { keepLoggedIn: boolean }>({
+    resolver: zodResolver(loginSchema.extend({ keepLoggedIn: z.boolean().default(false) })),
     defaultValues: {
       username: "",
       email: "",
       password: "",
+      keepLoggedIn: false,
     },
   })
 
-  async function onSubmit(values: LoginValues) {
+  async function onSubmit(values: LoginValues & { keepLoggedIn: boolean }) {
     setError(undefined)
     startTransition(async () => {
-      const { error } = await login(values)
+      const { error } = await login({ ...values, keepLoggedIn: values.keepLoggedIn })
       if (error) setError(error)
     })
   }
@@ -68,6 +72,26 @@ export default function LoginForm() {
                 <PasswordInput placeholder="Password" {...field} className="h-11 bg-gray-100 border-0 rounded-sm" />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="keepLoggedIn"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormControl>
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} id="keepLoggedIn" />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <Label htmlFor="keepLoggedIn" className="text-sm text-gray-600">
+                  Keep me logged in
+                </Label>
+                <p className="text-xs text-gray-400">
+                  Stay signed in for 10 days. You will be logged out after 10 days of inactivity. Not recommended for
+                  shared devices.
+                </p>
+              </div>
             </FormItem>
           )}
         />

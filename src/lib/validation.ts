@@ -17,6 +17,7 @@ export const loginSchema = z.object({
   username: requiredString,
   email: z.string().email("Invalid email address"),
   password: requiredString,
+  keepLoggedIn: z.boolean().default(false),
 })
 
 export type LoginValues = z.infer<typeof loginSchema>;
