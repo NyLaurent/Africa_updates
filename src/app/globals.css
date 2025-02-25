@@ -117,3 +117,14 @@
 .str-chat__channel-search-bar-button--exit-search {
   display: none;
 }
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
