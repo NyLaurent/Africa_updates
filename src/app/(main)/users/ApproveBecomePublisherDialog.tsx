@@ -64,8 +64,7 @@
           </DialogHeader>
           <div className="space-y-3 max-h-[80vh] max-w-[40vw] overflow-y-auto">
             <p className="text-lg">
-              Are you sure you want to process the following request? This action
-              is final and cannot be undone.
+              Are you sure you want to process the following request?
             </p>
 
             <div className="border rounded-lg p-4">
