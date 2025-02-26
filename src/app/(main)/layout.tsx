@@ -3,10 +3,10 @@ import { validateRequest } from "@/auth"
 import Navbar from "./Navbar"
 import MiniNav from "../../components/MiniNav"
 import SessionProvider from "./SessionProvider"
-import Image from "next/image"
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Github } from "lucide-react"
 import { format } from "date-fns"
 import Link from "next/link"
+import RotatingAdBanner from "@/components/RotatingAdBanner"
 
 export default async function Layout({
   children,
@@ -49,19 +49,42 @@ export default async function Layout({
   ]
   const today = format(new Date(), "MM/dd/yyyy")
 
+  // Example ad list - you can replace with your own ads
+  const ads = [
+    {
+      id: "1",
+      imageSrc: "/myad.webp",
+      link: "https://example.com/ad1",
+      alt: "Advertisement 1",
+    },
+    {
+      id: "2",
+      imageSrc: "/luka.jpg",
+      link: "",
+      alt: "Special Offer Advertisement",
+    },
+    {
+      id: "3",
+      imageSrc: "/ad2.jpg",
+      link: "",
+      alt: "Limited Time Deal Advertisement",
+    },
+  ]
+
   return (
     <SessionProvider value={{ user } as any}>
       <div className="flex min-h-screen flex-col">
-        <Navbar />
+        <Navbar showAdvert={true} />
         <MiniNav />
         <div className="w-full justify-between flex flex-row gap-8 items-start p-3">
           <div className="flex-1 max-w-[70%]">
-            <Image
-              src="/myad.webp"
-              alt="Advertisement"
+            {/* Replace static Image with RotatingAdBanner */}
+            <RotatingAdBanner
+              ads={ads}
+              rotationInterval={5000} // 30 seconds
               width={1200}
               height={90}
-              className="w-full h-[100px] object-cover object-center"
+             
             />
           </div>
           <div className="flex flex-col space-y-3 items-center">

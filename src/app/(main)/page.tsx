@@ -5,6 +5,7 @@ import Image from "next/image"
 import prisma from "@/lib/prisma"
 import UserDashboard from "@/components/UserDashboard"
 import NewsFeed from "@/components/newsFeed" // Import the NewsFeed component
+import RotatingAdBanner from "@/components/RotatingAdBanner"
 
 export default async function Home() {
   const session = await validateRequest()
@@ -18,6 +19,28 @@ export default async function Home() {
         hasPaid: userInfo.hasPaid ?? false,
       }
     : null
+
+    const ads = [
+      {
+        id: "1",
+        imageSrc: "/myad.webp",
+        link: "https://example.com/ad1",
+        alt: "Advertisement 1",
+      },
+      {
+        id: "2",
+        imageSrc: "/luka.jpg",
+        link: "",
+        alt: "Special Offer Advertisement",
+      },
+      {
+        id: "3",
+        imageSrc: "/ad2.jpg",
+        link: "",
+        alt: "Limited Time Deal Advertisement",
+      },
+    ]
+  
 
   return (
     <main className="flex w-full min-w-0 gap-5">
@@ -39,13 +62,13 @@ export default async function Home() {
               <div className="space-y-8 w-1/3 mt-[73px] right-6">
             <div className="bg-card rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-4">Advertisement</h3>
-              <Image
-                src="/myad.webp"
-                alt="Advertisement"
-                width={400}
-                height={300}
-                className="rounded-lg w-full"
-              />
+              <RotatingAdBanner
+                           ads={ads}
+                           rotationInterval={5000} // 30 seconds
+                           width={400}
+                           height={300}
+                          
+                         />
             </div>
 
             <div className="bg-card rounded-lg p-6">

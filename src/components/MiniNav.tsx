@@ -21,11 +21,11 @@ export default function MiniNav() {
   ]
 
   return (
-    <div className="w-full  bg-white dark:bg-gray-900">
+    <div className="w-full bg-white dark:bg-gray-900">
       <div className="border-b border-t dark:border-gray-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center">
-            <nav className="flex items-center overflow-x-auto no-scrollbar py-1 -mb-px max-w-full">
+            <nav className="flex items-center overflow-x-auto no-scrollbar py-1 -mb-px w-full">
               {navItems.map((item) => {
                 const isActive = pathname === item.href
 
@@ -61,4 +61,3 @@ export default function MiniNav() {
     </div>
   )
 }
-
