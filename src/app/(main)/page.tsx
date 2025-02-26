@@ -65,7 +65,7 @@ export default async function Home() {
               <RotatingAdBanner
                            ads={ads}
                            rotationInterval={8000} // 30 seconds
-                           width={400}
+                           width={500}
                            height={300}
                           
                          />
