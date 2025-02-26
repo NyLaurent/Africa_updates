@@ -1,21 +1,19 @@
-import { validateRequest } from "@/auth";
-import { redirect } from "next/navigation";
-import MenuBar from "./MenuBar";
-import Navbar from "./Navbar";
-import SessionProvider from "./SessionProvider";
-import Image from "next/image";
+import type React from "react"
+import { validateRequest } from "@/auth"
+import Navbar from "./Navbar"
+import MiniNav from "../../components/MiniNav"
+import SessionProvider from "./SessionProvider"
+import Image from "next/image"
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Github } from "lucide-react"
-import { LinksSidebar, TrendingTopics } from "@/components/TrendsSidebar";
-import { format } from "date-fns";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { format } from "date-fns"
+import Link from "next/link"
 
 export default async function Layout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const { user } = await validateRequest();
+  const { user } = await validateRequest()
 
   const socialLinks = [
     {
@@ -50,11 +48,12 @@ export default async function Layout({
     },
   ]
   const today = format(new Date(), "MM/dd/yyyy")
-  
+
   return (
     <SessionProvider value={{ user } as any}>
       <div className="flex min-h-screen flex-col">
         <Navbar />
+        <MiniNav />
         <div className="w-full justify-between flex flex-row gap-8 items-start p-3">
           <div className="flex-1 max-w-[70%]">
             <Image
@@ -68,37 +67,37 @@ export default async function Layout({
           <div className="flex flex-col space-y-3 items-center">
             <div className="text-right space-y-2">
               {user ? (
-                <div className="text-base font-semibold">Username: <span className="text-emerald-500">{user.username}</span></div>
+                <div className="text-base font-semibold">
+                  Username: <span className="text-emerald-500">{user.username}</span>
+                </div>
               ) : (
-                 <Link
-            href={"/login"}
-            className="rounded-full bg-primary px-10 py-2 font-bold sm:ms-auto"
-          >
-            Login
-          </Link>
+                <Link href={"/login"} className="rounded-full bg-primary px-10 py-2 font-bold sm:ms-auto">
+                  Login
+                </Link>
               )}
-              <div className="text-base font-semibold">Date: <span className="text-emerald-500">{today}</span></div>
+              <div className="text-base font-semibold">
+                Date: <span className="text-emerald-500">{today}</span>
+              </div>
             </div>
             <div className="flex gap-2 items-start">
-            {socialLinks.map((link, index) => (
-              <Link
-                key={index}
-                href={link.href}
-                className={`${link.color} p-2 rounded-full transition-all duration-300 transform hover:scale-110 flex items-center justify-center shadow-md`}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Visit our ${link.href.split("https://")[1].split(".com")[0]} page`}
-              >
-                {link.icon}
-              </Link>
-            ))}
-          </div>
+              {socialLinks.map((link, index) => (
+                <Link
+                  key={index}
+                  href={link.href}
+                  className={`${link.color} p-2 rounded-full transition-all duration-300 transform hover:scale-110 flex items-center justify-center shadow-md`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Visit our ${link.href.split("https://")[1].split(".com")[0]} page`}
+                >
+                  {link.icon}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="mx-auto flex w-full grow gap-5 p-5">
-          {children}
-        </div>
+        <div className="mx-auto flex w-full grow gap-5 p-5">{children}</div>
       </div>
     </SessionProvider>
-  );
+  )
 }
+
