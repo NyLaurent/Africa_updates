@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { CreditCard, Smartphone, DollarSign, ChevronDown } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
+import { toast } from "@/components/ui/use-toast"
+import { useSession } from "@/app/(main)/SessionProvider"
 
 type FormData = {
   firstName: string
@@ -26,6 +28,7 @@ type FormData = {
 }
 
 export default function AdvertiserRegistrationForm() {
+  const { user } = useSession()
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -79,26 +82,50 @@ export default function AdvertiserRegistrationForm() {
 
   const handleSubmit = async () => {
     if (!validateForm()) {
-      const firstError = Object.keys(errors)[0]
-      const element = document.getElementById(firstError)
-      if (element) element.scrollIntoView({ behavior: "smooth" })
-      return
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("Form submitted successfully:", formData)
-      alert("Registration successful!")
+      const response = await fetch("/api/advertiser/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Registration failed");
+      }
+
+      if (formData.paymentType !== "free") {
+        // Initiate payment
+        const paymentResponse = await fetch("/api/payment/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user?.id }),
+        });
+
+        const paymentData = await paymentResponse.json();
+        if (paymentData.url) {
+          window.location.href = paymentData.url; // Redirect to Stripe Checkout
+          return;
+        }
+      }
+
+      toast({
+        description: "Advertiser registration successful!",
+      });
     } catch (error) {
-      console.error("Error submitting form:", error)
-      alert("There was an error submitting your registration. Please try again.")
+      console.error("Registration error:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to register. Please try again.",
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const renderProgressBar = () => {
     return (

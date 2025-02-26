@@ -84,20 +84,62 @@ export default function PublisherRegistrationForm() {
   }
 
   const handleSubmit = async () => {
-    if (formData.paymentType !== "free") {
-      // Initiate payment
-      const paymentResponse = await fetch("/api/payment/checkout", {
+    if (!validateForm()) {
+      return;
+    }
+
+    if (!user) {
+      toast({
+        variant: "destructive",
+        description: "You must be logged in to register as a publisher.",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/publisher/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
+        body: JSON.stringify({
+          ...formData,
+          userId: user.id  // Include the user ID in the registration data
+        }),
       });
 
-      const paymentData = await paymentResponse.json();
-      if (paymentData.url) {
-        window.location.href = paymentData.url; // Redirect to Stripe Checkout
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Registration failed");
       }
+
+      if (formData.paymentType !== "free") {
+        const paymentResponse = await fetch("/api/payment/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id }),
+        });
+
+        const paymentData = await paymentResponse.json();
+        if (paymentData.url) {
+          window.location.href = paymentData.url;
+          return;
+        }
+      }
+
+      toast({
+        description: "Publisher registration successful!",
+      });
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast({
+        variant: "destructive",
+        description: error instanceof Error ? error.message : "Failed to register. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const renderProgressBar = () => {
     return (

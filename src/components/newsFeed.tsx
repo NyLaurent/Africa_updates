@@ -107,7 +107,7 @@ function Post({ post, featured = false }: { post: PostData; featured?: boolean }
             <AvatarImage src="/placeholder-user.jpg" />
             <AvatarFallback>AT</AvatarFallback>
           </Avatar>
-          <span className="text-sm text-muted-foreground">AfricaTeam</span>
+          <span className="text-sm text-muted-foreground">{post.user.displayName}</span>
           <span className="text-sm text-muted-foreground">
             {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
           </span>

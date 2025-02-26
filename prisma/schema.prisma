@@ -1,69 +1,53 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
+  url       = env("DATABASE_URL")
 }
 
 model paymentSession {
   id              String   @id @default(cuid())
   userId          String
   paymentIntentId String   @unique
-  paymentMethod   String
-  status          String   // Added this field
   createdAt       DateTime @default(now())
+  paymentMethod   String
+  status          String
   user            User     @relation("UserPayments", fields: [userId], references: [id])
 
   @@index([userId])
 }
 
 model User {
-  id                    String         @id
-  username              String         @unique
+  id                    String             @id
+  username              String             @unique
   displayName           String
-  email                 String?        @unique
+  email                 String?            @unique
   passwordHash          String?
-  googleId              String?        @unique
+  googleId              String?            @unique
   avatarUrl             String?
   bio                   String?
-  sessions              Session[]
-  role                  Role           @default(USER)
-  hasPaid               Boolean?       @default(false)// Only relevant if role is PUBLISHER
-  payments             paymentSession[] @relation("UserPayments")
-  posts                 Post[]
-  following             Follow[]       @relation("Following")
-  followers             Follow[]       @relation("Followers")
-  likes                 Like[]
+  role                  Role               @default(USER)
+  createdAt             DateTime           @default(now())
+  hasPaid               Boolean?           @default(false)
   bookmarks             Bookmark[]
   comments              Comment[]
-  receivedNotifications Notification[] @relation("Recipient")
-  issuedNotifications   Notification[] @relation("Issuer")
-
-  createdAt        DateTime           @default(now())
-  PublisherRequest PublisherRequest[]
-  Story            Story[]
-  Vote             Vote[]
+  following             Follow[]           @relation("Following")
+  followers             Follow[]           @relation("Followers")
+  likes                 Like[]
+  issuedNotifications   Notification[]     @relation("Issuer")
+  receivedNotifications Notification[]     @relation("Recipient")
+  payments              paymentSession[]   @relation("UserPayments")
+  posts                 Post[]
+  PublisherProfile      PublisherProfile?
+  PublisherRequest      PublisherRequest[]
+  sessions              Session[]
+  Story                 Story[]
+  Vote                  Vote[]
+  AdvertiserProfile     AdvertiserProfile?
 
   @@map("users")
-
-  PublisherProfile PublisherProfile[]
-}
-
-
-enum Role {
-  USER
-  PUBLISHER
-  ADMIN
 }
 
 model Session {
@@ -77,12 +61,223 @@ model Session {
 
 model Follow {
   followerId  String
-  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
   followingId String
+  follower    User   @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
   following   User   @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
   @@map("follows")
+}
+
+model Post {
+  id                  String         @id @default(cuid())
+  title               String
+  description         String
+  body                String?
+  userId              String
+  category            Category?
+  createdAt           DateTime       @default(now())
+  role                Role?
+  options             PollOption[]
+  bookmarks           Bookmark[]
+  comments            Comment[]
+  likes               Like[]
+  linkedNotifications Notification[]
+  attachments         Media[]
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("posts")
+}
+
+model Story {
+  id                  String         @id @default(cuid())
+  title               String
+  description         String
+  userId              String
+  createdAt           DateTime       @default(now())
+  mediaId             String
+  bookmarks           Bookmark[]
+  comments            Comment[]
+  likes               Like[]
+  linkedNotifications Notification[]
+  attachments         Media          @relation(fields: [mediaId], references: [id])
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("story")
+}
+
+model PollOption {
+  id     String  @id @default(cuid())
+  title  String
+  postId String?
+  Post   Post?   @relation(fields: [postId], references: [id])
+  Vote   Vote[]
+}
+
+model Vote {
+  id       String      @id @default(cuid())
+  userId   String
+  optionId String?
+  option   PollOption? @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, optionId])
+  @@map("votes")
+}
+
+model Media {
+  id        String    @id @default(cuid())
+  postId    String?
+  type      MediaType
+  url       String
+  createdAt DateTime  @default(now())
+  post      Post?     @relation(fields: [postId], references: [id])
+  Story     Story[]
+
+  @@map("post_media")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  postId    String?
+  storyId   String?
+  createdAt DateTime @default(now())
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  story     Story?   @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Like {
+  id      String  @id @default(cuid())
+  userId  String
+  postId  String?
+  storyId String?
+  post    Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  story   Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId, storyId])
+  @@unique([userId, postId], name: "userId_postId")
+  @@map("likes")
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String?
+  storyId   String?
+  createdAt DateTime @default(now())
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  story     Story?   @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@map("bookmarks")
+}
+
+model Link {
+  id        String   @id @default(cuid())
+  title     String
+  url       String
+  category  String
+  createdAt DateTime @default(now())
+
+  @@map("links")
+}
+
+model Notification {
+  id                 String            @id @default(cuid())
+  recipientId        String
+  issuerId           String
+  postId             String?
+  storyId            String?
+  type               NotificationType
+  read               Boolean           @default(false)
+  body               String?
+  createdAt          DateTime          @default(now())
+  publisherRequestId String?
+  issuer             User              @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
+  post               Post?             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  publisherRequest   PublisherRequest? @relation(fields: [publisherRequestId], references: [id], onDelete: Cascade)
+  recipient          User              @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  story              Story?            @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model PublisherRequest {
+  id           String         @id @default(cuid())
+  userId       String
+  status       RequestStatus
+  requestedAt  DateTime       @default(now())
+  respondedAt  DateTime?
+  message      String?
+  Notification Notification[]
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("publisher_requests")
+}
+
+model PublisherProfile {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  firstName             String
+  lastName              String
+  workPhone             String
+  cellPhone             String
+  address               String
+  city                  String
+  stateProvince         String
+  country               String
+  postalCode            String
+  companyName           String
+  socialMediaUrl        String?
+  pressReleaseFrequency String?
+  productsOfInterest    String[]
+  bestTimeToReach       String?
+  additionalInfo        String?
+  paymentType           String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  user                  User     @relation(fields: [userId], references: [id])
+
+  @@map("publisher_profiles")
+}
+
+model AdvertiserProfile {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  firstName             String
+  lastName              String
+  workPhone             String
+  cellPhone             String
+  address               String
+  city                  String
+  stateProvince         String
+  country               String
+  postalCode            String
+  organization          String
+  socialMedia          String?
+  advertisementType     String
+  advertisementLocation String[]
+  bestTimeToReach      String?
+  additionalInfo       String?
+  paymentType          String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  user                 User     @relation(fields: [userId], references: [id])
+
+  @@map("advertiser_profiles")
+}
+
+enum Role {
+  USER
+  PUBLISHER
+  ADMIN
 }
 
 enum Category {
@@ -125,162 +320,9 @@ enum Category {
   CELEBRITY
 }
 
-model Post {
-  id                  String         @id @default(cuid())
-  title               String
-  description         String
-  body                String?
-  userId              String
-  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  attachments         Media[]
-  likes               Like[]
-  role                Role?
-  category            Category?
-  bookmarks           Bookmark[]
-  options             PollOption[]
-  comments            Comment[]
-  linkedNotifications Notification[]
-
-  createdAt DateTime @default(now())
-
-  @@map("posts")
-}
-
-model Story {
-  id                  String         @id @default(cuid())
-  title               String
-  description         String
-  userId              String
-  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  attachments         Media          @relation(fields: [mediaId], references: [id])
-  likes               Like[]
-  bookmarks           Bookmark[]
-  comments            Comment[]
-  linkedNotifications Notification[]
-
-  createdAt DateTime @default(now())
-  mediaId   String
-
-  @@map("story")
-}
-
-model PollOption {
-  id     String  @id @default(cuid())
-  title  String
-  Vote   Vote[]
-  Post   Post?   @relation(fields: [postId], references: [id])
-  postId String?
-}
-
-model Vote {
-  id       String      @id @default(cuid())
-  userId   String
-  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  optionId String?
-  option   PollOption? @relation(fields: [optionId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, optionId])
-  @@map("votes")
-}
-
-model Media {
-  id     String    @id @default(cuid())
-  postId String?
-  post   Post?     @relation(fields: [postId], references: [id], onDelete: SetNull)
-  type   MediaType
-  url    String
-
-  createdAt DateTime @default(now())
-  Story     Story[]
-
-  @@map("post_media")
-}
-
 enum MediaType {
   IMAGE
   VIDEO
-}
-
-model Comment {
-  id      String  @id @default(cuid())
-  content String
-  userId  String
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  postId  String?
-  post    Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  storyId   String?
-  story     Story?   @relation(fields: [storyId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-
-  @@map("comments")
-}
-
-model Like {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  postId String?
-  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  storyId String?
-  story   Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, postId, storyId])
-  @@unique([userId, postId], name: "userId_postId")
-  @@map("likes")
-}
-
-model Bookmark {
-  id     String  @id @default(cuid())
-  userId String
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  postId String?
-  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  storyId String?
-  story   Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, postId])
-  @@map("bookmarks")
-}
-
-model Link {
-  id        String   @id @default(cuid())
-  title     String
-  url       String
-  category  String
-  createdAt DateTime @default(now())
-
-  @@map("links")
-}
-
-model Notification {
-  id                 String  @id @default(cuid())
-  recipientId        String
-  recipient          User    @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
-  issuerId          String
-  issuer            User    @relation("Issuer", fields: [issuerId], references: [id], onDelete: Cascade)
-
-  postId            String?
-  post              Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  storyId           String?
-  story             Story?  @relation(fields: [storyId], references: [id], onDelete: Cascade)
-
-  publisherRequestId String?  // New field to link with PublisherRequest
-  publisherRequest   PublisherRequest? @relation(fields: [publisherRequestId], references: [id], onDelete: Cascade)
-
-  type              NotificationType
-  read              Boolean @default(false)
-  body              String? // This will store the approval/rejection message
-
-  createdAt         DateTime @default(now())
-
-  @@map("notifications")
 }
 
 enum NotificationType {
@@ -290,47 +332,8 @@ enum NotificationType {
   BECOME_PUBLISHER
 }
 
-model PublisherRequest {
-  id          String        @id @default(cuid())
-  userId      String
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status      RequestStatus
-  requestedAt DateTime      @default(now())
-  respondedAt DateTime?
-  message     String?       // Stores the admin's message for approval or rejection
-
-  @@map("publisher_requests")
-  Notification Notification[]
-}
-
 enum RequestStatus {
   PENDING
   APPROVED
   REJECTED
-}
-
-model PublisherProfile {
-  id                  String   @id @default(cuid())
-  userId              String   @unique
-  user                User     @relation(fields: [userId], references: [id])
-  firstName           String
-  lastName            String
-  workPhone           String
-  cellPhone           String
-  address            String
-  city               String
-  stateProvince      String
-  country            String
-  postalCode         String
-  companyName        String
-  socialMediaUrl     String?
-  pressReleaseFrequency String?
-  productsOfInterest String[]
-  bestTimeToReach    String?
-  additionalInfo     String?
-  paymentType        String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-
-  @@map("publisher_profiles")
 }

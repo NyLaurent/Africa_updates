@@ -149,7 +149,6 @@ export default async function Home() {
           </Tabs>
         )}
       </div>
-      {userInfo?.role === "ADMIN" && <TrendsSidebar />}
     </main>
   )
 }

@@ -5,7 +5,6 @@ import Navbar from "./Navbar";
 import SessionProvider from "./SessionProvider";
 import Image from "next/image";
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Github } from "lucide-react"
-import { LinksSidebar, TrendingTopics } from "@/components/TrendsSidebar";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";

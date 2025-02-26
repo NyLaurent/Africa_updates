@@ -61,6 +61,30 @@ export default function AdminPage({userInfo}: {userInfo: User}) {
           {/* Left Box */}
           <Card className="bg-card dark:text-white text-black border-border hover:shadow-lg transition-shadow">
             <CardContent className="space-y-4 pt-6">
+            {userInfo.role === "ADMIN" && (
+                <>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full justify-start hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <Link href="/admin-panel">
+                      <Settings className="w-4 h-4 mr-2" />
+                      Admin Panel
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full justify-start hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <Link href="/admin-email">
+                      <Mail className="w-4 h-4 mr-2" />
+                      Admin Email
+                    </Link>
+                  </Button>
+                </>
+              )}
               <Button
                 asChild
                 variant="outline"
