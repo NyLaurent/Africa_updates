@@ -64,7 +64,7 @@ export default async function Home() {
               <h3 className="text-xl font-semibold mb-4">Advertisement</h3>
               <RotatingAdBanner
                            ads={ads}
-                           rotationInterval={5000} // 30 seconds
+                           rotationInterval={8000} // 30 seconds
                            width={400}
                            height={300}
                           
