@@ -15,6 +15,7 @@ const nextConfig = {
       "utfs.io",
       "j1384sfojb.ufs.sh",
       "lh3.googleusercontent.com",
+      "6sz1qc36yi.ufs.sh"
     ],
   },
   webpack: (config) => {

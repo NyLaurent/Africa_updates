@@ -21,10 +21,10 @@ import { useRouter } from "next/navigation";
 
 export default function StoryEditor() {
   const [contentData, setContentData] = useState("")
-  // const { user } = useSession();
+  const { user } = useSession();
+  const router = useRouter();
 
   const mutation = useSubmitStoryMutation();
-  const router = useRouter()
 
   const {
     startUpload,
@@ -37,6 +37,7 @@ export default function StoryEditor() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: startUpload,
+    maxFiles: 1, // Only allow one file for stories
   });
 
   const { onClick, ...rootProps } = getRootProps();
@@ -48,28 +49,27 @@ export default function StoryEditor() {
         italic: false,
       }),
       Placeholder.configure({
-        placeholder: "What's crack-a-lackin'?",
+        placeholder: "Add a caption to your story...",
       }),
     ],
   });
 
-  const input =
-    editor?.getText({
-      blockSeparator: "\n",
-    }) || "";
+  const input = editor?.getText({ blockSeparator: "\n" }) || "";
 
   function onSubmit() {
+    if (!attachments[0]?.mediaId) return;
+    
     mutation.mutate(
       {
         title: input,
         description: contentData,
-        mediaId: attachments[0].mediaId as any,
+        mediaId: attachments[0].mediaId,
       },
       {
         onSuccess: () => {
           editor?.commands.clearContent();
           resetMediaUploads();
-          router.push("/")
+          router.push("/stories")
         },
       },
     );
@@ -85,7 +85,7 @@ export default function StoryEditor() {
   return (
     <div className="flex flex-col gap-5 rounded-2xl bg-card p-5 shadow-sm">
       <div className="flex gap-5">
-        {/* <UserAvatar avatarUrl={user.avatarUrl} className="hidden sm:inline" /> */}
+        <UserAvatar avatarUrl={user.avatarUrl} className="hidden sm:inline" />
         <div {...rootProps} className="w-full">
           <EditorContent
             editor={editor}
@@ -110,7 +110,6 @@ export default function StoryEditor() {
         <RichTextEditor value={contentData} onChange={(value: any) => setContentData(value)} />
       </div>
 
-
       <div className="flex items-center justify-end gap-3">
         {isUploading && (
           <>
@@ -131,10 +130,6 @@ export default function StoryEditor() {
           Post
         </LoadingButton>
       </div>
-
-
-
-
     </div>
   );
 }

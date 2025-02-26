@@ -2,22 +2,25 @@
 
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
 
 export default function MiniNav() {
   const pathname = usePathname()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const currentCategory = searchParams.get('category')
 
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Africa Map", href: "/africa-map" },
-    { label: "Politics", href: "/politics" },
-    { label: "Video", href: "/video" },
-    { label: "Push", href: "/push" },
-    { label: "Business", href: "/business" },
-    { label: "Sports", href: "/sports" },
-    { label: "Technology", href: "/technology" },
-    { label: "Entertainment", href: "/entertainment" },
+    { label: "Politics", href: "/?category=politics" },
+    { label: "Video", href: "/?category=video" },
+    { label: "Push", href: "/stories" },
+    { label: "Business", href: "/?category=business" },
+    { label: "Sports", href: "/?category=sports" },
+    { label: "Technology", href: "/?category=technology" },
+    { label: "Entertainment", href: "/?category=entertainment" },
   ]
 
   return (
@@ -27,7 +30,9 @@ export default function MiniNav() {
           <div className="flex justify-center">
             <nav className="flex items-center overflow-x-auto no-scrollbar py-1 -mb-px w-full">
               {navItems.map((item) => {
-                const isActive = pathname === item.href
+                const isActive = item.href.includes('category') 
+                  ? searchParams.get('category') === item.href.split('=')[1]
+                  : pathname === item.href
 
                 return (
                   <Link

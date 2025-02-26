@@ -120,7 +120,7 @@ export default function AdminPage({userInfo}: {userInfo: User}) {
                 variant="outline"
                 className="w-full justify-start hover:bg-accent hover:text-accent-foreground"
               >
-                <Link href="/push-wall">
+                <Link href="/stories">
                   <Grid2X2 className="w-4 h-4 mr-2" />
                   Push wall
                 </Link>
@@ -166,7 +166,7 @@ export default function AdminPage({userInfo}: {userInfo: User}) {
                 variant="outline"
                 className="w-full justify-start hover:bg-accent hover:text-accent-foreground"
               >
-                <Link href="/new-story">
+                <Link href="/posts/create">
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Post a new story
                 </Link>

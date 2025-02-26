@@ -100,7 +100,8 @@ model Story {
   comments            Comment[]
   likes               Like[]
   linkedNotifications Notification[]
-  attachments         Media          @relation(fields: [mediaId], references: [id])
+  attachments         Media          @relation("StoryThumbnail", fields: [mediaId], references: [id])
+  media               Media[]        @relation("StoryMedia")
   user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("story")
@@ -132,7 +133,8 @@ model Media {
   url       String
   createdAt DateTime  @default(now())
   post      Post?     @relation(fields: [postId], references: [id])
-  Story     Story[]
+  Story     Story[]   @relation("StoryThumbnail")
+  storyMedia Story[]  @relation("StoryMedia")
 
   @@map("post_media")
 }

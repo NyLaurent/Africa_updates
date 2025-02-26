@@ -181,3 +181,24 @@ export interface LinkData {
   url: string;
   category: string;
 }
+
+export interface Story {
+  id: string;
+  title: string;
+  description: string;
+  attachments?: {
+    url: string;
+    type: string;
+  };
+  media: {
+    url: string;
+    type: "IMAGE" | "VIDEO";
+  };
+  user: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatarUrl: string | null;
+  };
+  createdAt: string;
+}
