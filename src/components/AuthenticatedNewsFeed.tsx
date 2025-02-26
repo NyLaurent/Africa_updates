@@ -304,7 +304,7 @@ function Post({ post, featured = false }: { post: PostData; featured?: boolean }
       <CardFooter className="flex justify-between pt-3 border-t border-blue-100 dark:border-blue-900/50">
         <div className="flex items-center gap-4">
           <div 
-            className="flex items-center text-primary gap-1.5 cursor-pointer hover:text-primary transition-colors"
+            className="flex items-center text-black gap-1.5 cursor-pointer hover:text-primary transition-colors"
             onClick={() => setShowComments(!showComments)}
           >
             <MessageCircle className="h-4 w-4 text-primary" />
@@ -313,10 +313,8 @@ function Post({ post, featured = false }: { post: PostData; featured?: boolean }
           <LikeButton
             postId={post.id}
             initialState={{
-              likes: post._count.likes,
-              isLikedByUser: post.likes?.some(
-                (like) => like.userId === user?.id
-              ),
+              likes: post._count.likes || 0,
+              isLikedByUser: post.likes?.some((like) => like.userId === user?.id) || false,
             }}
           />
         </div>

@@ -94,6 +94,7 @@ export function getStoryDataInclude(loggedInUserId: string) {
 
 export type PostData = Prisma.PostGetPayload<{
   include: ReturnType<typeof getPostDataInclude>;
+  content?: string;
 }>;
 
 export type StoryData = Prisma.StoryGetPayload<{

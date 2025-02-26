@@ -16,13 +16,19 @@ export default function Comments({ post }: CommentsProps) {
   const { data, fetchNextPage, hasNextPage, isFetching, status } =
     useInfiniteQuery({
       queryKey: ["comments", post.id],
-      queryFn: ({ pageParam }) =>
-        kyInstance
-          .get(
-            `/api/posts/${post.id}/comments`,
-            pageParam ? { searchParams: { cursor: pageParam } } : {},
-          )
-          .json<CommentsPage>(),
+      queryFn: async ({ pageParam }) => {
+        try {
+          return await kyInstance
+            .get(
+              `/api/posts/${post.id}/comments`,
+              pageParam ? { searchParams: { cursor: pageParam } } : {},
+            )
+            .json<CommentsPage>();
+        } catch (error) {
+          // Return empty comments page for unauthorized users
+          return { comments: [], previousCursor: null };
+        }
+      },
       initialPageParam: null as string | null,
       getNextPageParam: (firstPage) => firstPage.previousCursor,
       select: (data) => ({
@@ -49,11 +55,6 @@ export default function Comments({ post }: CommentsProps) {
       {status === "pending" && <Loader2 className="mx-auto animate-spin" />}
       {status === "success" && !comments.length && (
         <p className="text-center text-muted-foreground">No comments yet.</p>
-      )}
-      {status === "error" && (
-        <p className="text-center text-destructive">
-          An error occurred while loading comments.
-        </p>
       )}
       <div className="divide-y">
         {comments.map((comment) => (

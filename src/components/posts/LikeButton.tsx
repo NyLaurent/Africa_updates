@@ -63,7 +63,7 @@ export default function LikeButton({ postId, initialState }: LikeButtonProps) {
   return (
     <button
       onClick={() => mutate()}
-      className="flex items-center gap-2"
+      className="flex items-center text-primary gap-2"
       disabled={!user}
     >
       <Heart
@@ -73,7 +73,7 @@ export default function LikeButton({ postId, initialState }: LikeButtonProps) {
         )}
       />
       <span className="text-sm font-medium tabular-nums">
-        {data.likes} <span className="hidden sm:inline">likes</span>
+        {data.likes}
       </span>
     </button>
   );
