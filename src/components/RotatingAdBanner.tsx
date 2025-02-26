@@ -137,7 +137,7 @@ export default function RotatingAdBanner({
   if ((adList.length === 0 && !isLoading) || error) {
     return (
       <div
-        className={`relative w-full h-[100px] bg-gray-100 dark:bg-gray-800 rounded-md flex items-center justify-center ${className}`}
+        className={`relative w-full h-[150px] bg-gray-100 dark:bg-gray-800 rounded-md flex items-center justify-center ${className}`}
       >
         <p className="text-gray-500 dark:text-gray-400 text-sm">{error || "No advertisements available"}</p>
       </div>
