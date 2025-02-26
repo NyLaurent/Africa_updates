@@ -40,9 +40,13 @@ export default function SignUpForm() {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel className="dark:text-white">Username</FormLabel>
               <FormControl>
-                <Input placeholder="Username" {...field} className="h-11 bg-gray-100 border-0 rounded-md" />
+                <Input
+                  placeholder="Username"
+                  {...field}
+                  className="h-11 bg-gray-100 dark:bg-gray-700 border-0 rounded-md dark:text-white dark:placeholder-gray-400"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -53,9 +57,14 @@ export default function SignUpForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="dark:text-white">Email</FormLabel>
               <FormControl>
-                <Input placeholder="Email" type="email" {...field} className="h-11 bg-gray-100 border-0 rounded-md" />
+                <Input
+                  placeholder="Email"
+                  type="email"
+                  {...field}
+                  className="h-11 bg-gray-100 dark:bg-gray-700 border-0 rounded-md dark:text-white dark:placeholder-gray-400"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -66,9 +75,13 @@ export default function SignUpForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="dark:text-white">Password</FormLabel>
               <FormControl>
-                <PasswordInput placeholder="Password" {...field} className="h-11 bg-gray-100 border-0 rounded-md" />
+                <PasswordInput
+                  placeholder="Password"
+                  {...field}
+                  className="h-11 bg-gray-100 dark:bg-gray-700 border-0 rounded-md dark:text-white dark:placeholder-gray-400"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -65,7 +65,7 @@ export default function DashboardLayout({userInfo}: {userInfo: User}) {
             </div>
 
             <div className="bg-card rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-6">WhatsApp</h3>
+              <h3 className="text-xl font-semibold mb-6">WhatsUp</h3>
               <div className="space-y-6">
                 <div className="flex gap-4">
                   <Image

@@ -4,9 +4,7 @@
 
 @import "~stream-chat-react/dist/css/v2/index.css";
 
-
-body{
-
+body {
   font-family: var(--font-work-sans), sans-serif;
 }
 
@@ -88,26 +86,18 @@ body{
   --str-chat__primary-color: theme(colors.primary.DEFAULT);
   --str-chat__on-primary-color: theme(colors.primary.foreground);
   --str-chat__active-primary-color: theme(colors.primary.foreground);
-  --str-chat__primary-color-low-emphasis: color-mix(
-    in hsl,
-    hsl(var(--primary)) 10%,
-    transparent
-  );
+  --str-chat__primary-color-low-emphasis: color-mix(in hsl, hsl(var(--primary)) 10%, transparent);
   --str-chat__background-color: theme(colors.card.DEFAULT);
   --str-chat__secondary-background-color: theme(colors.card.DEFAULT);
   --str-chat__message-textarea-background-color: theme(colors.background);
   --str-chat__channel-preview-active-background-color: theme(
     colors.accent.DEFAULT
   );
-  --str-chat__channel-preview-hover-background-color: var(
-    --str-chat__channel-preview-active-background-color
-  );
+  --str-chat__channel-preview-hover-background-color: var(--str-chat__channel-preview-active-background-color);
   --str-chat__secondary-surface-color: theme(colors.muted.DEFAULT);
   --str-chat__own-message-bubble-color: theme(colors.primary.foreground);
   --str-chat__primary-surface-color: theme(colors.primary.DEFAULT);
-  --str-chat__primary-surface-color-low-emphasis: var(
-    --str-chat__primary-color-low-emphasis
-  );
+  --str-chat__primary-surface-color-low-emphasis: var(--str-chat__primary-color-low-emphasis);
   --str-chat__disabled-color: theme(colors.muted.DEFAULT);
   --str-chat__cta-button-border-radius: var(--radius);
 }
@@ -124,8 +114,6 @@ body{
   display: none;
 }
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -134,3 +122,17 @@ body{
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
