@@ -9,17 +9,19 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-5">
+    <main className="flex min-h-screen items-center justify-center p-5 dark:bg-gray-900">
       <div className="flex w-full max-w-5xl overflow-hidden rounded-sm shadow-lg">
-        <div className="flex-1 bg-white p-8">
+        <div className="flex-1 bg-white dark:bg-gray-800 p-8">
           <div className="w-full max-w-sm mx-auto space-y-6">
-            <h1 className="text-3xl font-bold">SignIn to <span className="text-emerald-500">Africa Updates</span></h1>
+            <h1 className="text-3xl font-bold dark:text-white">
+              SignIn to <span className="text-emerald-500">Africa Updates</span>
+            </h1>
             <div className="space-y-6">
               <GoogleSignInButton />
               <div className="flex items-center gap-3">
-                <div className="h-px flex-1 bg-muted" />
-                <span className="text-sm text-muted-foreground">OR</span>
-                <div className="h-px flex-1 bg-muted" />
+                <div className="h-px flex-1 bg-muted dark:bg-gray-600" />
+                <span className="text-sm text-muted-foreground dark:text-gray-400">OR</span>
+                <div className="h-px flex-1 bg-muted dark:bg-gray-600" />
               </div>
               <LoginForm />
             </div>

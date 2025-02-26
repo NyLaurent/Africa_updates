@@ -45,7 +45,11 @@ export default function LoginForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Username" {...field} className="h-11 bg-gray-100 border-0 rounded-sm" />
+                <Input
+                  placeholder="Username"
+                  {...field}
+                  className="h-11 bg-gray-100 dark:bg-gray-700 border-0 rounded-sm dark:text-white dark:placeholder-gray-400"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -57,7 +61,12 @@ export default function LoginForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Email" type="email" {...field} className="h-11 bg-gray-100 border-0 rounded-sm" />
+                <Input
+                  placeholder="Email"
+                  type="email"
+                  {...field}
+                  className="h-11 bg-gray-100 dark:bg-gray-700 border-0 rounded-sm dark:text-white dark:placeholder-gray-400"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -69,7 +78,11 @@ export default function LoginForm() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <PasswordInput placeholder="Password" {...field} className="h-11 bg-gray-100 border-0 rounded-sm" />
+                <PasswordInput
+                  placeholder="Password"
+                  {...field}
+                  className="h-11 bg-gray-100 dark:bg-gray-700 border-0 rounded-sm dark:text-white dark:placeholder-gray-400"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -84,10 +97,10 @@ export default function LoginForm() {
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} id="keepLoggedIn" />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <Label htmlFor="keepLoggedIn" className="text-sm text-gray-600">
+                <Label htmlFor="keepLoggedIn" className="text-sm text-gray-600 dark:text-gray-300">
                   Keep me logged in
                 </Label>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-400 dark:text-gray-500">
                   Stay signed in for 10 days. You will be logged out after 10 days of inactivity. Not recommended for
                   shared devices.
                 </p>
