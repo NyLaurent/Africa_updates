@@ -26,6 +26,7 @@ const Page = () => {
   const handleDoItLater = () => {
     // Hide the reminder
     setShowReminder(false);
+    
   };
 
   return (

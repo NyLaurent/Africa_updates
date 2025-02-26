@@ -3,8 +3,6 @@
 import { useState } from "react"
 import { CreditCard, Smartphone, DollarSign, ChevronDown } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/components/ui/use-toast"
-import { useSession } from "@/app/(main)/SessionProvider"
 
 type FormData = {
   firstName: string
@@ -19,15 +17,15 @@ type FormData = {
   organization: string
   socialMedia: string
   pushNotifications: boolean
-  pressReleaseFrequency: string
-  productsOfInterest: string[]
+  advertisementType: string
+  advertisementLocation: string[]
   bestTimeToReach: string
   additionalInfo: string
   paymentType: string
   paymentMethod: string
 }
 
-export default function PublisherRegistrationForm() {
+export default function AdvertiserRegistrationForm() {
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -42,8 +40,8 @@ export default function PublisherRegistrationForm() {
     organization: "",
     socialMedia: "",
     pushNotifications: false,
-    pressReleaseFrequency: "",
-    productsOfInterest: [],
+    advertisementType: "",
+    advertisementLocation: [],
     bestTimeToReach: "",
     additionalInfo: "",
     paymentType: "",
@@ -51,8 +49,6 @@ export default function PublisherRegistrationForm() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
-  const { toast } = useToast()
-  const { user } = useSession()
 
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -77,25 +73,30 @@ export default function PublisherRegistrationForm() {
     if (!formData.workPhone) newErrors.workPhone = "Work phone is required"
     if (!formData.organization) newErrors.organization = "Organization name is required"
 
-    // Add more validations as needed
-
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async () => {
-    if (formData.paymentType !== "free") {
-      // Initiate payment
-      const paymentResponse = await fetch("/api/payment/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
-      });
+    if (!validateForm()) {
+      const firstError = Object.keys(errors)[0]
+      const element = document.getElementById(firstError)
+      if (element) element.scrollIntoView({ behavior: "smooth" })
+      return
+    }
 
-      const paymentData = await paymentResponse.json();
-      if (paymentData.url) {
-        window.location.href = paymentData.url; // Redirect to Stripe Checkout
-      }
+    setIsSubmitting(true)
+
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      console.log("Form submitted successfully:", formData)
+      alert("Registration successful!")
+    } catch (error) {
+      console.error("Error submitting form:", error)
+      alert("There was an error submitting your registration. Please try again.")
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -103,7 +104,7 @@ export default function PublisherRegistrationForm() {
     return (
       <div className="mb-8">
         <div className="flex justify-between mb-2">
-          {["Personal Information", "Organization Details", "Preferences", "Payment"].map((step, index) => (
+          {["Personal Information", "Organization Details", "Advertisement Details", "Payment"].map((step, index) => (
             <span
               key={index}
               className={`text-sm font-medium ${
@@ -326,58 +327,58 @@ export default function PublisherRegistrationForm() {
           Enable Push Notifications
         </label>
       </div>
+    </div>
+  )
+
+  const renderAdvertisementDetails = () => (
+    <div className="grid gap-6">
       <div className="space-y-2">
-        <label htmlFor="pressRelease" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Press Release Frequency
+        <label htmlFor="advertisementType" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Advertisement Type
         </label>
         <div className="relative">
           <select
-            id="pressRelease"
+            id="advertisementType"
             className="w-full appearance-none px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-900 dark:text-white transition-all duration-200 pr-10"
-            value={formData.pressReleaseFrequency}
-            onChange={(e) => updateFormData("pressReleaseFrequency", e.target.value)}
+            value={formData.advertisementType}
+            onChange={(e) => updateFormData("advertisementType", e.target.value)}
           >
-            <option value="">Select frequency</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-            <option value="quarterly">Quarterly</option>
+            <option value="">Select type</option>
+            <option value="banner">Banner Ads</option>
+            <option value="video">Video Ads</option>
+            <option value="native">Native Ads</option>
+            <option value="sponsored">Sponsored Content</option>
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
             <ChevronDown className="h-5 w-5 text-gray-400" />
           </div>
         </div>
       </div>
-    </div>
-  )
-
-  const renderPreferences = () => (
-    <div className="grid gap-6">
       <div className="space-y-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Products of Interest</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Advertisement Location</label>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {["Communications", "Analytics", "Data", "Monitoring/Research Data"].map((product) => (
+          {["Homepage", "Article Pages", "Sidebar", "Mobile App"].map((location) => (
             <div
-              key={product}
+              key={location}
               className="flex items-center space-x-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm hover:border-green-300 dark:hover:border-green-700 transition-all duration-200"
             >
               <Checkbox
-                id={product}
-                checked={formData.productsOfInterest.includes(product)}
+                id={location}
+                checked={formData.advertisementLocation.includes(location)}
                 onCheckedChange={(checked) => {
                   if (checked) {
-                    updateFormData("productsOfInterest", [...formData.productsOfInterest, product])
+                    updateFormData("advertisementLocation", [...formData.advertisementLocation, location])
                   } else {
                     updateFormData(
-                      "productsOfInterest",
-                      formData.productsOfInterest.filter((p) => p !== product),
+                      "advertisementLocation",
+                      formData.advertisementLocation.filter((l) => l !== location),
                     )
                   }
                 }}
                 className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
               />
-              <label htmlFor={product} className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
-                {product}
+              <label htmlFor={location} className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+                {location}
               </label>
             </div>
           ))}
@@ -413,7 +414,7 @@ export default function PublisherRegistrationForm() {
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-900 dark:text-white min-h-[120px] transition-all duration-200"
           value={formData.additionalInfo}
           onChange={(e) => updateFormData("additionalInfo", e.target.value)}
-          placeholder="Any additional information you'd like to share..."
+          placeholder="Any additional information about your advertising needs..."
         />
       </div>
     </div>
@@ -432,14 +433,6 @@ export default function PublisherRegistrationForm() {
             }`}
             onClick={() => updateFormData("paymentType", "onetime")}
           >
-            <input
-              type="radio"
-              name="paymentType"
-              id="onetime"
-              className="sr-only"
-              checked={formData.paymentType === "onetime"}
-              onChange={() => {}}
-            />
             <div className="flex flex-col items-center text-center gap-2">
               <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-600 dark:text-green-400">
                 <DollarSign size={20} />
@@ -460,14 +453,6 @@ export default function PublisherRegistrationForm() {
             }`}
             onClick={() => updateFormData("paymentType", "subscription")}
           >
-            <input
-              type="radio"
-              name="paymentType"
-              id="subscription"
-              className="sr-only"
-              checked={formData.paymentType === "subscription"}
-              onChange={() => {}}
-            />
             <div className="flex flex-col items-center text-center gap-2">
               <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-600 dark:text-green-400">
                 <CreditCard size={20} />
@@ -488,14 +473,6 @@ export default function PublisherRegistrationForm() {
             }`}
             onClick={() => updateFormData("paymentType", "free")}
           >
-            <input
-              type="radio"
-              name="paymentType"
-              id="free"
-              className="sr-only"
-              checked={formData.paymentType === "free"}
-              onChange={() => {}}
-            />
             <div className="flex flex-col items-center text-center gap-2">
               <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-600 dark:text-green-400">
                 <svg
@@ -582,7 +559,7 @@ export default function PublisherRegistrationForm() {
       case 2:
         return renderOrganizationDetails()
       case 3:
-        return renderPreferences()
+        return renderAdvertisementDetails()
       case 4:
         return renderPayment()
       default:
@@ -593,8 +570,8 @@ export default function PublisherRegistrationForm() {
   return (
     <div className="w-full max-w-4xl mx-auto bg-white dark:bg-black shadow-xl dark:shadow-2xl rounded-xl overflow-hidden transition-all duration-300">
       <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Publisher Registration</h2>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">Complete the form to register as a publisher</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Advertiser Registration</h2>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">Complete the form to register as an advertiser</p>
       </div>
       <div className="p-6">
         {renderProgressBar()}
@@ -658,3 +635,4 @@ export default function PublisherRegistrationForm() {
     </div>
   )
 }
+

@@ -36,9 +36,6 @@ export default async function Navbar() {
                     <Button variant="default">Create Post</Button>
                   </Link>
                 </div>
-                <div>
-                  <BecomePublisherButton user={userInfo as any} />
-                </div>
               </div>
             )}
             {userInfo?.role === "ADMIN" && (
