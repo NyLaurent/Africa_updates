@@ -278,7 +278,7 @@ function Post({ post, featured = false }: { post: PostData; featured?: boolean }
         <div className="flex items-center gap-3 mb-3">
           <Avatar className="h-10 w-10 ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
             <AvatarImage src={avatarSrc} />
-            <AvatarFallback className="bg-primary/20 text-primary font-medium">{avatarFallback}</AvatarFallback>
+          <AvatarFallback className="bg-primary/20 text-primary font-medium">{avatarFallback}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <span className="text-sm font-medium text-primary">{authorName}</span>

@@ -4,13 +4,22 @@ import Image from "next/image"
 import RotatingAdBanner from "@/components/RotatingAdBanner"
 import { useQuery } from "@tanstack/react-query"
 import kyInstance from "@/lib/ky"
-import type { Story, PostsPage } from "@/lib/types"
+import type { Story, PostsPage, PostData } from "@/lib/types"
 import { formatDistanceToNow } from "date-fns"
 import Link from "next/link"
 import UserAvatar from "./UserAvatar"
 import FollowButton from "./FollowButton"
 import UserTooltip from "./UserTooltip"
 import { useSession } from "@/app/(main)/SessionProvider"
+import { Heart } from "lucide-react"
+
+interface Attachment {
+  url: string;
+  type: string;
+  id?: string;
+  createdAt?: Date;
+  postId?: string | null;
+}
 
 interface NewsSidebarProps {
   ads: {
@@ -19,6 +28,63 @@ interface NewsSidebarProps {
     link: string
     alt: string
   }[]
+}
+
+function StoryItem({ post }: { post: Story & { attachments?: Array<{ url: string; type: string }> } }) {
+  return (
+    <Link href={`/article/${post.id}`} className="group block">
+      <div className="flex gap-3 items-start">
+        <div className="relative w-20 h-20 flex-shrink-0">
+          <Image
+            src={post.attachments?.[0]?.url || '/placeholder.jpg'}
+            alt={post.title}
+            fill
+            className="object-cover rounded-md"
+          />
+        </div>
+        <div className="flex-1">
+          <h4 className="font-medium group-hover:text-primary transition-colors line-clamp-2">
+            {post.title}
+          </h4>
+          <time className="text-sm text-muted-foreground">
+            {formatDistanceToNow(new Date(post.createdAt))} ago
+          </time>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+interface NewsItemProps {
+  post: PostData | Story;
+}
+
+function NewsItem({ post }: NewsItemProps) {
+  const isStory = 'attachments' in post; // Check if it's a story
+  return (
+    <Link href={`/stories/${post.id}`} className="group block">
+      <div className="flex gap-3 items-start">
+        {isStory && post.attachments?.length > 0 && (
+          <div className="relative w-20 h-20 flex-shrink-0">
+            <Image
+              src={post.attachments[0]?.url || '/placeholder.jpg'}
+              alt={post.title}
+              fill
+              className="object-cover rounded-md"
+            />
+          </div>
+        )}
+        <div className="flex-1">
+          <h4 className="font-medium group-hover:text-primary transition-colors line-clamp-2">
+            {post.title}
+          </h4>
+          <time className="text-sm text-muted-foreground">
+            {formatDistanceToNow(new Date(post.createdAt))} ago
+          </time>
+        </div>
+      </div>
+    </Link>
+  );
 }
 
 export default function NewsSidebar({ ads }: NewsSidebarProps) {
@@ -43,13 +109,17 @@ export default function NewsSidebar({ ads }: NewsSidebarProps) {
     },
   })
 
-  const { data: oldestPosts = [] } = useQuery({
-    queryKey: ["oldest-posts"],
+  const { data: popularPosts = [], isLoading } = useQuery({
+    queryKey: ["popular-posts"],
     queryFn: async () => {
-      const response = await kyInstance.get("/api/posts/oldest").json<PostsPage>()
-      return response.posts
+      const response = await kyInstance.get("/api/posts/popular-sidebar").json<PostData[]>();
+      return response;
     },
   })
+
+  if (isLoading) {
+    return <div className="animate-pulse">Loading...</div>;
+  }
 
   return (
     <div className="w-full lg:w-1/3 space-y-6 mt-6 lg:mt-[73px]">
@@ -71,13 +141,7 @@ export default function NewsSidebar({ ads }: NewsSidebarProps) {
         <h3 className="text-lg md:text-xl font-semibold mb-4 md:mb-6">Push</h3>
         <div className="space-y-4 md:space-y-6">
           {stories.slice(0, 2).map((story) => (
-            <NewsItem
-              key={story.id}
-              imageSrc={story.attachments?.url || ""}
-              title={story.title}
-              description={story.description}
-              date={story.createdAt}
-            />
+            <NewsItem key={story.id} post={story} />
           ))}
         </div>
       </div>
@@ -125,13 +189,7 @@ export default function NewsSidebar({ ads }: NewsSidebarProps) {
         <h3 className="text-lg md:text-xl font-semibold mb-4 md:mb-6">WhatsUp</h3>
         <div className="space-y-4 md:space-y-6">
           {latestPosts.map((post) => (
-            <NewsItem
-              key={post.id}
-              imageSrc={post.attachments?.[0]?.url || "/placeholder.jpg"}
-              title={post.title}
-              description={post.description}
-              date={post.createdAt.toISOString()}
-            />
+            <NewsItem key={post.id} post={post} />
           ))}
         </div>
       </div>
@@ -140,52 +198,10 @@ export default function NewsSidebar({ ads }: NewsSidebarProps) {
       <div className="bg-card rounded-lg p-4 md:p-6 shadow-sm dark:shadow-none">
         <h3 className="text-lg md:text-xl font-semibold mb-4 md:mb-6">Most Popular</h3>
         <div className="space-y-4 md:space-y-6">
-          {oldestPosts.map((post) => (
-            <NewsItem
-              key={post.id}
-              imageSrc={post.attachments?.[0]?.url || "/placeholder.jpg"}
-              title={post.title}
-              description={post.description}
-              date={post.createdAt.toISOString()}
-            />
+          {popularPosts.map((post) => (
+            <NewsItem key={post.id} post={post} />
           ))}
         </div>
-      </div>
-    </div>
-  )
-}
-
-interface NewsItemProps {
-  imageSrc: string
-  title: string
-  description: string
-  alt?: string
-  date?: string
-}
-
-function NewsItem({ imageSrc, title, description, alt, date }: NewsItemProps) {
-  // Strip HTML tags from description
-  const cleanDescription = description?.replace(/<[^>]*>/g, '') || '';
-
-  return (
-    <div className="flex gap-3 md:gap-4">
-      <div className="flex-shrink-0">
-        <Image
-          src={imageSrc}
-          alt={alt || title}
-          width={80}
-          height={80}
-          className="rounded-lg w-16 h-16 md:w-20 md:h-20 object-cover"
-        />
-      </div>
-      <div className="min-w-0">
-        <h4 className="font-medium text-base md:text-lg mb-1 line-clamp-2">{title}</h4>
-        <p className="text-muted-foreground text-sm md:text-base line-clamp-2 mb-1">{cleanDescription}</p>
-        {date && (
-          <time className="text-xs text-muted-foreground">
-            {formatDistanceToNow(new Date(date), { addSuffix: true })}
-          </time>
-        )}
       </div>
     </div>
   )
