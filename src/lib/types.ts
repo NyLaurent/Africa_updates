@@ -187,10 +187,10 @@ export interface Story {
   id: string;
   title: string;
   description: string;
-  attachments?: {
+  attachments?: Array<{
     url: string;
     type: string;
-  };
+  }>;
   media: {
     url: string;
     type: "IMAGE" | "VIDEO";

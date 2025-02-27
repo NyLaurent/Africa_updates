@@ -6,8 +6,29 @@ import Image from "next/image"
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Github } from "lucide-react"
 import AdminPage from "./AdminPage"
 import { User } from "lucia"
+import RotatingAdBanner from "./RotatingAdBanner"
 
 export default function DashboardLayout({userInfo}: {userInfo: User}) { 
+  const ads = [
+    {
+      id: "1",
+      imageSrc: "/myad.webp",
+      link: "https://example.com/ad1",
+      alt: "Advertisement 1",
+    },
+    {
+      id: "2",
+      imageSrc: "/luka.jpg",
+      link: "",
+      alt: "Special Offer Advertisement",
+    },
+    {
+      id: "3",
+      imageSrc: "/ad2.jpg",
+      link: "",
+      alt: "Limited Time Deal Advertisement",
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-background">
@@ -23,9 +44,9 @@ export default function DashboardLayout({userInfo}: {userInfo: User}) {
           <div className="space-y-8 w-1/3 right-6">
             <div className="bg-card rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-4">Advertisement</h3>
-              <Image
-                src="/myad.webp"
-                alt="Advertisement"
+              <RotatingAdBanner
+                ads={ads}
+                rotationInterval={5000}
                 width={400}
                 height={300}
                 className="rounded-lg w-full"

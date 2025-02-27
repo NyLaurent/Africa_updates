@@ -32,3 +32,7 @@ export function slugify(input: string): string {
     .replace(/ /g, "-")
     .replace(/[^a-z0-9-]/g, "");
 }
+
+export function stripHtml(html: string) {
+  return html?.replace(/<[^>]*>/g, '') || '';
+}
